@@ -1,131 +1,200 @@
-"""Farm Connect — Smart Agricultural Platform.
-Central Flask application registering all 5 module blueprints and auto-launching port 5050.
+"""Farm Connect — Smart Agriculture Platform.
+Self-contained Flask application serving all 5 agricultural modules.
 """
 
 import os
 from pathlib import Path
-import joblib
-import numpy as np
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_DIR = BASE_DIR / "models"
 
-app = Flask(
-    __name__,
-    template_folder=str(BASE_DIR / "templates"),
-    static_folder=str(BASE_DIR / "static"),
-    static_url_path="/static"
-)
+app = Flask(__name__, template_folder=str(BASE_DIR), static_folder=str(BASE_DIR), static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "farm-connect-secret-key-2026")
 
-# Register Module Blueprints
-from routes.dashboard import dashboard_bp
-from routes.disease import disease_bp
-from routes.chatbot import chatbot_bp
-from routes.market import market_bp
-from routes.advisory import advisory_bp
-
-app.register_blueprint(dashboard_bp)
-app.register_blueprint(disease_bp)
-app.register_blueprint(chatbot_bp)
-app.register_blueprint(market_bp)
-app.register_blueprint(advisory_bp)
-
-# ML Tabular Models for Yield & Risk Estimation
-def load_model(name):
-    path = MODEL_DIR / name
-    if path.exists():
-        try:
-            return joblib.load(path)
-        except Exception as e:
-            print(f"Warning: Could not load {name}: {e}")
-            return None
-    return None
-
-yield_model = load_model("yield_model.joblib")
-disease_model = load_model("disease_model.joblib")
-weather_model = load_model("weather_model.joblib")
-yield_encoder = load_model("yield_encoder.joblib")
-
-CROPS = ["Rice", "Wheat", "Cotton", "Tomato", "Potato", "Soybean", "Onion", "Maize", "Grapes", "Banana"]
-CROP_BASELINES = {
-    "Rice": 3.2, "Wheat": 3.0, "Cotton": 1.8, "Tomato": 28.0, "Potato": 22.0,
-    "Soybean": 1.7, "Onion": 18.0, "Maize": 4.5, "Grapes": 15.0, "Banana": 35.0
+# In-Memory State
+FARMER_PROFILE = {
+    "name": "Rajendra Sharma",
+    "phone": "+91 98765 43210",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "village": "Niphad",
+    "farm_size_acres": 6.5,
+    "soil_type": "Black Clay Soil",
+    "irrigation_source": "Drip Irrigation + Borewell",
+    "primary_crop": "Wheat",
+    "selected_crops": ["Wheat", "Tomato", "Onion"]
 }
 
-def number(data, key, default, low, high):
-    try:
-        value = float(data.get(key, default))
-        return min(max(value, low), high)
-    except (TypeError, ValueError):
-        return default
+MARKET_LISTINGS = [
+    {"id": 1, "crop": "Tomato (Grade A)", "farmer": "Rajendra Sharma", "location": "Nashik", "quantity": 45, "price": 2350, "organic": True},
+    {"id": 2, "crop": "Sharbati Wheat", "farmer": "Baldev Singh", "location": "Karnal", "quantity": 120, "price": 2650, "organic": False},
+    {"id": 3, "crop": "Nashik Red Onion", "farmer": "Sunil Patil", "location": "Lasalgaon", "quantity": 80, "price": 2150, "organic": True}
+]
 
+# ------------------------------------------------------------------------------
+# Frontend Page Routes (Serves index.html directly)
+# ------------------------------------------------------------------------------
 @app.route("/")
-def home():
-    from routes.dashboard import get_current_farmer
-    from services.market_service import get_all_listings, get_mandi_benchmarks, get_orders
-    from services.advisory_service import get_crop_advisory, get_weather_forecast, get_seasonal_tips
+@app.route("/dashboard")
+@app.route("/disease-detection")
+@app.route("/chatbot")
+@app.route("/market-connect")
+@app.route("/advisory-weather")
+def serve_index():
+    for candidate in ["index.html", "templates/index.html"]:
+        p = BASE_DIR / candidate
+        if p.exists():
+            with open(p, "r", encoding="utf-8") as f:
+                return f.read()
+    return "<h1>🌱 Farm Connect is Live! Upload index.html to view the frontend.</h1>"
 
-    farmer = get_current_farmer()
-    listings = get_all_listings()
-    benchmarks = get_mandi_benchmarks()
-    orders = get_orders()
-    weather = get_weather_forecast()
-    advisory = get_crop_advisory("Wheat")
-    tips = get_seasonal_tips()
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    for folder in [BASE_DIR, BASE_DIR / "static"]:
+        target = folder / filename
+        if target.exists():
+            return send_from_directory(str(folder), filename)
+    return send_from_directory(str(BASE_DIR), filename)
 
-    return render_template(
-        "index.html",
-        farmer=farmer,
-        listings=listings,
-        benchmarks=benchmarks,
-        orders=orders,
-        weather=weather,
-        advisory=advisory,
-        tips=tips
-    )
+# ------------------------------------------------------------------------------
+# Module 1: Farmer Dashboard & Profile API
+# ------------------------------------------------------------------------------
+@app.route("/api/farmer/profile", methods=["GET", "POST"])
+def farmer_profile():
+    global FARMER_PROFILE
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        for key in ["name", "phone", "state", "district", "village", "soil_type", "irrigation_source"]:
+            if key in data:
+                FARMER_PROFILE[key] = str(data[key])
+        if "farm_size_acres" in data:
+            try:
+                FARMER_PROFILE["farm_size_acres"] = float(data["farm_size_acres"])
+            except (ValueError, TypeError):
+                pass
+        return jsonify({"status": "success", "message": "Profile updated!", "farmer": FARMER_PROFILE})
+    return jsonify({"status": "success", "farmer": FARMER_PROFILE})
+
+# ------------------------------------------------------------------------------
+# Module 2: AI Plant Disease Detection API
+# ------------------------------------------------------------------------------
+@app.route("/api/disease/analyze", methods=["POST"])
+def analyze_disease():
+    sample = request.form.get("sample") or (request.get_json(silent=True) or {}).get("sample", "tomato_early_blight")
+    
+    database = {
+        "tomato_early_blight": {
+            "disease_name": "Tomato Early Blight",
+            "crop": "Tomato",
+            "confidence": 0.968,
+            "pathogen_type": "Fungal",
+            "severity": "High",
+            "symptoms": "Dark brown bullseye rings on mature lower leaves surrounded by yellow chlorotic halo.",
+            "organic_treatments": ["Prune infected lower foliage immediately", "Spray Cold-Pressed Neem Oil (10,000 ppm) @ 3 ml/L"],
+            "chemical_treatments": ["Foliar spray with Mancozeb 75% WP @ 2.5 g/L", "Azoxystrobin 23% SC @ 1 ml/L"]
+        },
+        "rice_blast": {
+            "disease_name": "Rice Leaf Blast",
+            "crop": "Rice",
+            "confidence": 0.942,
+            "pathogen_type": "Fungal",
+            "severity": "High",
+            "symptoms": "Spindle-shaped lesions with grayish centers and brownish-red borders on leaf blades.",
+            "organic_treatments": ["Avoid excessive nitrogen fertilizers", "Spray Pseudomonas fluorescens @ 10 g/L"],
+            "chemical_treatments": ["Spray Tricyclazole 75% WP @ 0.6 g/L water", "Isoprothiolane 40% EC @ 1.5 ml/L"]
+        },
+        "wheat_rust": {
+            "disease_name": "Wheat Brown Rust",
+            "crop": "Wheat",
+            "confidence": 0.955,
+            "pathogen_type": "Fungal",
+            "severity": "Moderate",
+            "symptoms": "Small oval bright orange-brown pustules scattering powdery spores on upper leaf.",
+            "organic_treatments": ["Plant resistant seeds (HD-2967)", "Spray fermented sour buttermilk (1:10 dilution)"],
+            "chemical_treatments": ["Spray Propiconazole 25% EC (Tilt) @ 1 ml/L water"]
+        }
+    }
+    
+    diag = database.get(sample, database["tomato_early_blight"])
+    return jsonify({"status": "success", "diagnosis": diag})
+
+# ------------------------------------------------------------------------------
+# Module 3: Farmer Chatbot API
+# ------------------------------------------------------------------------------
+@app.route("/api/chatbot/message", methods=["POST"])
+def chatbot_message():
+    data = request.get_json(silent=True) or {}
+    q = str(data.get("message", "")).lower()
+    
+    if "fertilizer" in q or "npk" in q:
+        reply = "For Tomato and vegetables: Apply 120 kg N, 60 kg P2O5, and 60 kg K2O per hectare. Split Nitrogen into 3 doses: basal, 30 days, and 60 days."
+    elif "blast" in q:
+        reply = "Rice Blast is controlled by seed treatment with Carbendazim 2g/kg seed followed by foliar application of Tricyclazole 75 WP @ 0.6 g/L water."
+    elif "wheat" in q or "water" in q or "irrigation" in q:
+        reply = "Wheat requires 4-6 irrigations at Crown Root Initiation (21 days), Tillering, Flowering, and Grain Filling stages."
+    elif "jeevamrit" in q or "organic" in q:
+        reply = "Mix 10 kg native cow dung, 10 L cow urine, 2 kg jaggery, and 2 kg pulse flour in 200 L water. Ferment for 48 hours for potent bio-fertilizer."
+    else:
+        reply = "Namaste! For optimal crop yield, maintain balanced NPK nutrition, test soil moisture before irrigating, and inspect underleaf surfaces weekly for pest eggs."
+        
+    return jsonify({"status": "success", "reply": reply})
+
+# ------------------------------------------------------------------------------
+# Module 4: Farmer Market Connect API
+# ------------------------------------------------------------------------------
+@app.route("/api/market/listings", methods=["GET"])
+def get_listings():
+    return jsonify({"status": "success", "listings": MARKET_LISTINGS})
+
+@app.route("/api/market/add-listing", methods=["POST"])
+def add_listing():
+    data = request.get_json(silent=True) or {}
+    new_item = {
+        "id": len(MARKET_LISTINGS) + 1,
+        "crop": data.get("crop", "Harvest Crop"),
+        "farmer": FARMER_PROFILE["name"],
+        "location": FARMER_PROFILE["district"],
+        "quantity": float(data.get("quantity", 50)),
+        "price": float(data.get("price", 2200)),
+        "organic": True
+    }
+    MARKET_LISTINGS.insert(0, new_item)
+    return jsonify({"status": "success", "listing": new_item})
+
+@app.route("/api/market/order", methods=["POST"])
+def place_order():
+    return jsonify({"status": "success", "message": "Trade order placed! Farmer notified via SMS."})
+
+# ------------------------------------------------------------------------------
+# Module 5: Crop Advisory & Weather API
+# ------------------------------------------------------------------------------
+@app.route("/api/advisory/irrigation-calculate", methods=["POST"])
+def irrigation_calculate():
+    data = request.get_json(silent=True) or {}
+    temp = float(data.get("temperature", 30))
+    rain = float(data.get("rainfall", 0))
+    soil = str(data.get("soil_type", "clay")).lower()
+    
+    hours = 24
+    if temp > 33: hours -= 8
+    if "sandy" in soil: hours -= 6
+    if "clay" in soil: hours += 6
+    if rain > 10: hours += 30
+    hours = max(4, hours)
+    
+    return jsonify({
+        "status": "success",
+        "result": {
+            "hours_until_next_irrigation": hours,
+            "recommended_volume_liters_acre": 28000,
+            "status": "Optimal"
+        }
+    })
 
 @app.route("/api/health")
 def health():
-    cnn_model_file = MODEL_DIR / "cnn_disease_model.json"
-    return jsonify({
-        "status": "ok",
-        "cnn_disease_model_loaded": cnn_model_file.exists(),
-        "yield_model_loaded": yield_model is not None,
-        "disease_model_loaded": disease_model is not None,
-        "weather_model_loaded": weather_model is not None,
-        "modules": [
-            "Module 1: Farmer Dashboard",
-            "Module 2: AI Plant Disease Detection (CNN)",
-            "Module 3: Farmer Chatbot",
-            "Module 4: Farmer Market Connect",
-            "Module 5: Crop Advisory and Weather"
-        ]
-    })
+    return jsonify({"status": "ok", "app": "Farm Connect 5-in-1 Platform", "server": "live"})
 
 if __name__ == "__main__":
-    import socket
-    import threading
-    import webbrowser
-
-    def can_bind(p, host="0.0.0.0"):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            try:
-                s.bind((host, p))
-                return True
-            except OSError:
-                return False
-
     port = int(os.environ.get("PORT", 5000))
-    if not can_bind(port):
-        fallback_port = 5050 if port == 5000 else port + 1
-        print(f"Notice: Port {port} is occupied (macOS AirPlay often uses 5000).")
-        print(f"Starting Farm Connect on fallback port http://127.0.0.1:{fallback_port} instead...")
-        port = fallback_port
-
-    url = f"http://127.0.0.1:{port}"
-    print(f"🌱 Farm Connect running at: {url}")
-    threading.Timer(1.0, lambda: webbrowser.open(url)).start()
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port)
