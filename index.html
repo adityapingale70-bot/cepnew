@@ -100,6 +100,31 @@
       align-items: center;
       gap: 12px;
     }
+    .lang-selector-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .lang-select {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .lang-select option {
+      background: #ffffff;
+      color: var(--text-main);
+    }
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -1100,50 +1125,58 @@
 <header class="topbar">
   <a class="brand" href="/">
     <span class="brand-icon">🌱</span>
-    <span>Farm<span class="accent">Connect</span><small>5-IN-1 SMART AGRICULTURE PLATFORM</small></span>
+    <span>Farm<span class="accent">Connect</span><small data-i18n="platformTagline">5-IN-1 SMART AGRICULTURE PLATFORM</small></span>
   </a>
   <div class="topbar-right">
-    <span class="status-badge"><i class="pulse-dot"></i> CNN Model & Services Ready</span>
+    <div class="lang-selector-wrap">
+      <span class="lang-icon">🌐</span>
+      <select id="langSelect" class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </div>
+    <span class="status-badge"><i class="pulse-dot"></i> <span data-i18n="cnnStatusBadge">CNN Model & Services Ready</span></span>
     <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Toggle navigation">☰</button>
   </div>
 </header>
 
 <!-- Mobile Navigation Drawer -->
 <div class="mobile-nav" id="mobileNav">
-  <a href="#tab-overview" class="spa-tab-trigger" data-target="tab-overview">🌾 Platform Overview</a>
-  <a href="#tab-dashboard" class="spa-tab-trigger" data-target="tab-dashboard">📊 Module 1: Farmer Dashboard</a>
-  <a href="#tab-disease" class="spa-tab-trigger" data-target="tab-disease">🍃 Module 2: AI Disease Detection (CNN)</a>
-  <a href="#tab-chatbot" class="spa-tab-trigger" data-target="tab-chatbot">💬 Module 3: Farmer Chatbot</a>
-  <a href="#tab-market" class="spa-tab-trigger" data-target="tab-market">🛒 Module 4: Market Connect</a>
-  <a href="#tab-advisory" class="spa-tab-trigger" data-target="tab-advisory">🌦️ Module 5: Advisory & Weather</a>
-  <a href="#tab-estimators" class="spa-tab-trigger" data-target="tab-estimators">🧮 Field Estimators</a>
+  <a href="#tab-overview" class="spa-tab-trigger" data-target="tab-overview" data-i18n="tabOverview">🌾 Platform Overview</a>
+  <a href="#tab-dashboard" class="spa-tab-trigger" data-target="tab-dashboard" data-i18n="tabDashboard">📊 Module 1: Farmer Dashboard</a>
+  <a href="#tab-disease" class="spa-tab-trigger" data-target="tab-disease" data-i18n="tabDisease">🍃 Module 2: AI Disease Detection (CNN)</a>
+  <a href="#tab-chatbot" class="spa-tab-trigger" data-target="tab-chatbot" data-i18n="tabChatbot">💬 Module 3: Farmer Chatbot</a>
+  <a href="#tab-market" class="spa-tab-trigger" data-target="tab-market" data-i18n="tabMarket">🛒 Module 4: Market Connect</a>
+  <a href="#tab-advisory" class="spa-tab-trigger" data-target="tab-advisory" data-i18n="tabAdvisory">🌦️ Module 5: Advisory & Weather</a>
+  <a href="#tab-estimators" class="spa-tab-trigger" data-target="tab-estimators" data-i18n="tabEstimators">🧮 Field Estimators</a>
 </div>
 
 <main class="page-content">
   <!-- Interactive Single-Page Tabs Bar -->
   <nav class="app-nav-tabs" id="appNavTabs">
-    <button type="button" class="app-tab-btn active" data-target="tab-overview">🌾 Overview</button>
-    <button type="button" class="app-tab-btn" data-target="tab-dashboard">📊 Module 1: Dashboard</button>
-    <button type="button" class="app-tab-btn" data-target="tab-disease">🍃 Module 2: AI Disease (CNN)</button>
-    <button type="button" class="app-tab-btn" data-target="tab-chatbot">💬 Module 3: Kisan Chatbot</button>
-    <button type="button" class="app-tab-btn" data-target="tab-market">🛒 Module 4: Market Connect</button>
-    <button type="button" class="app-tab-btn" data-target="tab-advisory">🌦️ Module 5: Advisory & Weather</button>
-    <button type="button" class="app-tab-btn" data-target="tab-estimators">🧮 Yield & Soil Estimators</button>
+    <button type="button" class="app-tab-btn active" data-target="tab-overview" data-i18n="tabOverview">🌾 Overview</button>
+    <button type="button" class="app-tab-btn" data-target="tab-dashboard" data-i18n="tabDashboard">📊 Module 1: Dashboard</button>
+    <button type="button" class="app-tab-btn" data-target="tab-disease" data-i18n="tabDisease">🍃 Module 2: AI Disease (CNN)</button>
+    <button type="button" class="app-tab-btn" data-target="tab-chatbot" data-i18n="tabChatbot">💬 Module 3: Kisan Chatbot</button>
+    <button type="button" class="app-tab-btn" data-target="tab-market" data-i18n="tabMarket">🛒 Module 4: Market Connect</button>
+    <button type="button" class="app-tab-btn" data-target="tab-advisory" data-i18n="tabAdvisory">🌦️ Module 5: Advisory & Weather</button>
+    <button type="button" class="app-tab-btn" data-target="tab-estimators" data-i18n="tabEstimators">🧮 Yield & Soil Estimators</button>
   </nav>
 
   <!-- ==================== VIEW 0: PLATFORM OVERVIEW ==================== -->
   <section class="module-view-section active" id="tab-overview">
     <div class="hero-banner">
       <div class="hero-content">
-        <span class="eyebrow-pill">🌾 SMART AGRICULTURE PLATFORM</span>
-        <h1 class="hero-title">Make smarter decisions<br><span class="highlight">for every harvest.</span></h1>
-        <p class="hero-subtitle">
+        <span class="eyebrow-pill" data-i18n="heroPill">🌾 SMART AGRICULTURE PLATFORM</span>
+        <h1 class="hero-title" data-i18n="heroTitle">Make smarter decisions<br><span class="highlight">for every harvest.</span></h1>
+        <p class="hero-subtitle" data-i18n="heroSubtitle">
           A unified digital platform empowering farmers with CNN leaf disease detection, 24/7 agricultural chatbot advisory, direct market trading, and smart irrigation scheduling.
         </p>
         <div class="hero-actions">
-          <button type="button" class="btn btn-primary spa-tab-trigger" data-target="tab-disease">🍃 Scan Leaf with CNN <b>→</b></button>
-          <button type="button" class="btn btn-secondary spa-tab-trigger" data-target="tab-dashboard">📊 Open Farmer Dashboard</button>
-          <button type="button" class="btn btn-outline spa-tab-trigger" data-target="tab-chatbot">💬 Talk to Kisan AI</button>
+          <button type="button" class="btn btn-primary spa-tab-trigger" data-target="tab-disease" data-i18n="heroBtnDisease">🍃 Scan Leaf with CNN <b>→</b></button>
+          <button type="button" class="btn btn-secondary spa-tab-trigger" data-target="tab-dashboard" data-i18n="heroBtnDashboard">📊 Open Farmer Dashboard</button>
+          <button type="button" class="btn btn-outline spa-tab-trigger" data-target="tab-chatbot" data-i18n="heroBtnChatbot">💬 Talk to Kisan AI</button>
         </div>
       </div>
       <div class="hero-visual">
@@ -1433,8 +1466,8 @@
     <div class="page-header">
       <div>
         <span class="breadcrumb">Module 2</span>
-        <h1 class="page-title">🍃 AI Plant Disease Detection</h1>
-        <p class="page-desc">Upload or capture a crop-leaf image, analyze it with our trained Convolutional Neural Network (CNN) model, and receive instant diagnosis and treatment guidance.</p>
+        <h1 class="page-title" data-i18n="mod2Title">🍃 AI Plant Disease Detection</h1>
+        <p class="page-desc" data-i18n="mod2Desc">Upload or capture a crop-leaf image, analyze it with our trained Convolutional Neural Network (CNN) model, and receive instant diagnosis and treatment guidance.</p>
       </div>
       <div class="model-badge-pill">
         <span>🧠 Model:</span>
@@ -1448,8 +1481,8 @@
           <div class="title-with-icon">
             <span class="panel-icon">📷</span>
             <div>
-              <h3>Upload or Capture Crop Leaf</h3>
-              <p>Supports Tomato, Potato, Rice, Wheat, Cotton, Maize, Apple</p>
+              <h3 data-i18n="uploadCardTitle">Upload or Capture Crop Leaf</h3>
+              <p data-i18n="uploadCardSub">Supports Tomato, Potato, Rice, Wheat, Cotton, Maize, Apple</p>
             </div>
           </div>
         </div>
@@ -1458,19 +1491,19 @@
           <input type="file" id="leafFileInput" accept="image/*" capture="environment" style="display:none">
           <div class="dropzone-content" id="dropzonePrompt">
             <span class="upload-cloud-icon">📸</span>
-            <h4>Drag & Drop Leaf Photo Here</h4>
-            <p>or click to browse from your phone / computer</p>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('leafFileInput').click()">📁 Choose File</button>
+            <h4 data-i18n="dragDropText">Drag & Drop Leaf Photo Here</h4>
+            <p data-i18n="orBrowseText">or click to browse from your phone / computer</p>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('leafFileInput').click()" data-i18n="chooseFileBtn">📁 Choose File</button>
           </div>
           <div class="preview-wrapper" id="previewWrapper" style="display:none">
             <img id="imagePreview" alt="Leaf preview" class="leaf-img-preview">
-            <button type="button" class="btn-remove-preview" id="btnRemovePreview">✕ Remove</button>
+            <button type="button" class="btn-remove-preview" id="btnRemovePreview" data-i18n="removeBtn">✕ Remove</button>
           </div>
         </div>
 
         <div class="sample-leaves-section">
           <div class="sample-header">
-            <strong>⚡ Or click a sample leaf to test the CNN instantly:</strong>
+            <strong data-i18n="sampleHeader">⚡ Or click a sample leaf to test the CNN instantly:</strong>
           </div>
           <div class="sample-grid">
             <button type="button" class="sample-leaf-btn" data-sample="tomato_early_blight">
@@ -1500,7 +1533,7 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-primary btn-lg full-width" id="btnAnalyzeLeaf" disabled>
+        <button type="button" class="btn btn-primary btn-lg full-width" id="btnAnalyzeLeaf" disabled data-i18n="analyzeBtn">
           🔍 Analyze Leaf with CNN Model
         </button>
       </div>
@@ -1510,16 +1543,16 @@
           <div class="title-with-icon">
             <span class="panel-icon">🔬</span>
             <div>
-              <h3>CNN Neural Diagnosis Report</h3>
-              <p>Real-time convolutional feature inference results</p>
+              <h3 data-i18n="reportTitle">CNN Neural Diagnosis Report</h3>
+              <p data-i18n="reportSub">Real-time convolutional feature inference results</p>
             </div>
           </div>
         </div>
 
         <div id="diagnosisPlaceholder" class="empty-state">
           <span class="empty-icon">🌱</span>
-          <h4>No Image Analyzed Yet</h4>
-          <p>Select a leaf sample on the left or upload your crop photo to see the CNN diagnosis and complete treatment guidance.</p>
+          <h4 data-i18n="noImageTitle">No Image Analyzed Yet</h4>
+          <p data-i18n="noImageDesc">Select a leaf sample on the left or upload your crop photo to see the CNN diagnosis and complete treatment guidance.</p>
         </div>
 
         <div id="diagnosisLoading" class="loading-state" style="display:none">
@@ -1546,23 +1579,23 @@
 
           <div class="diagnosis-body">
             <div class="diag-section">
-              <h5>🔍 Key Symptoms:</h5>
+              <h5 data-i18n="symptomsTitle">🔍 Key Symptoms:</h5>
               <p id="diagSymptoms">Dark brown circular spots with concentric target-like rings.</p>
             </div>
 
             <div class="treatment-boxes">
               <div class="treatment-box organic">
-                <div class="treatment-title">🌿 Organic & Bio Treatment</div>
+                <div class="treatment-title" data-i18n="organicTitle">🌿 Organic & Bio Treatment</div>
                 <p id="diagOrganic">Apply cold-pressed Neem oil spray (5ml/L) or Copper oxychloride every 7-10 days.</p>
               </div>
 
               <div class="treatment-box chemical">
-                <div class="treatment-title">🧪 Chemical Recommendation & Dose</div>
+                <div class="treatment-title" data-i18n="chemicalTitle">🧪 Chemical Recommendation & Dose</div>
                 <p id="diagChemical">Spray Mancozeb 75% WP @ 2.5 g/L or Azoxystrobin 23% SC @ 1 ml/L.</p>
               </div>
 
               <div class="treatment-box prevention">
-                <div class="treatment-title">🛡️ Preventive Cultural Measures</div>
+                <div class="treatment-title" data-i18n="preventiveTitle">🛡️ Preventive Cultural Measures</div>
                 <p id="diagPrevention">Maintain 60cm plant spacing, use drip irrigation to keep foliage dry.</p>
               </div>
             </div>
@@ -2530,6 +2563,127 @@
 <!-- ⚡ ALL FRONTEND JAVASCRIPT IN ONE PLACE    -->
 <!-- ========================================== -->
 <script>
+// Multilingual Translation Engine (English, Hindi, Marathi)
+const TRANSLATIONS = {
+  en: {
+    platformTagline: "5-IN-1 SMART AGRICULTURE PLATFORM",
+    cnnStatusBadge: "CNN Model & Services Ready",
+    tabOverview: "🌾 Overview",
+    tabDashboard: "📊 Module 1: Dashboard",
+    tabDisease: "🍃 Module 2: AI Disease (CNN)",
+    tabChatbot: "💬 Module 3: Kisan Chatbot",
+    tabMarket: "🛒 Module 4: Market Connect",
+    tabAdvisory: "🌦️ Module 5: Advisory & Weather",
+    tabEstimators: "🧮 Yield & Soil Estimators",
+    heroPill: "🌾 SMART AGRICULTURE PLATFORM",
+    heroTitle: "Make smarter decisions<br><span class=\"highlight\">for every harvest.</span>",
+    heroSubtitle: "A unified digital platform empowering farmers with CNN leaf disease detection, 24/7 agricultural chatbot advisory, direct market trading, and smart irrigation scheduling.",
+    heroBtnDisease: "🍃 Scan Leaf with CNN <b>→</b>",
+    heroBtnDashboard: "📊 Open Farmer Dashboard",
+    heroBtnChatbot: "💬 Talk to Kisan AI",
+    mod2Title: "🍃 AI Plant Disease Detection",
+    mod2Desc: "Upload or capture a crop-leaf image, analyze it with our trained Convolutional Neural Network (CNN) model, and receive instant diagnosis and treatment guidance.",
+    uploadCardTitle: "Upload or Capture Crop Leaf",
+    uploadCardSub: "Supports Tomato, Potato, Rice, Wheat, Cotton, Maize, Apple",
+    dragDropText: "Drag & Drop Leaf Photo Here",
+    orBrowseText: "or click to browse from your phone / computer",
+    chooseFileBtn: "📁 Choose File",
+    removeBtn: "✕ Remove",
+    sampleHeader: "⚡ Or click a sample leaf to test the CNN instantly:",
+    analyzeBtn: "🔍 Analyze Leaf with CNN Model",
+    reportTitle: "CNN Neural Diagnosis Report",
+    reportSub: "Real-time convolutional feature inference results",
+    noImageTitle: "No Image Analyzed Yet",
+    noImageDesc: "Select a leaf sample on the left or upload your crop photo to see the CNN diagnosis and complete treatment guidance.",
+    symptomsTitle: "🔍 Key Symptoms:",
+    organicTitle: "🌿 Organic & Bio Treatment",
+    chemicalTitle: "🧪 Chemical Recommendation & Dose",
+    preventiveTitle: "🛡️ Preventive Cultural Measures"
+  },
+  hi: {
+    platformTagline: "५-इन-१ स्मार्ट कृषि डिजिटल मंच",
+    cnnStatusBadge: "सीएनएन मॉडल व सेवाएं सक्रिय",
+    tabOverview: "🌾 अवलोकन",
+    tabDashboard: "📊 विभाग १: किसान डैशबोर्ड",
+    tabDisease: "🍃 विभाग २: एआई रोग निदान (CNN)",
+    tabChatbot: "💬 विभाग ३: किसान चैटबॉट",
+    tabMarket: "🛒 विभाग ४: मंडी बाजार",
+    tabAdvisory: "🌦️ विभाग ५: मौसम व सिंचाई",
+    tabEstimators: "🧮 उपज व मृदा गणक",
+    heroPill: "🌾 स्मार्ट कृषि डिजिटल मंच",
+    heroTitle: "हर फसल के लिए सही<br><span class=\"highlight\">और सटीक निर्णय लें।</span>",
+    heroSubtitle: "एआई पत्ता रोग पहचान, २४/७ किसान चैटबॉट, सीधा मंडी व्यापार और स्मार्ट सिंचाई सलाह के साथ किसानों को सशक्त बनाने वाला मंच।",
+    heroBtnDisease: "🍃 पत्ते की जांच करें <b>→</b>",
+    heroBtnDashboard: "📊 किसान डैशबोर्ड खोलें",
+    heroBtnChatbot: "💬 किसान एआई से पूछें",
+    mod2Title: "🍃 एआई फसल रोग पहचान प्रणाली",
+    mod2Desc: "फसल के पत्ते की फोटो अपलोड करें और हमारे प्रशिक्षित सीएनएन मॉडल द्वारा तुरंत रोग पहचान, लक्षण और दवा की सलाह प्राप्त करें।",
+    uploadCardTitle: "पत्ते की फोटो अपलोड करें",
+    uploadCardSub: "टमाटर, आलू, धान, गेहूं, कपास, मक्का, सेब समर्थित",
+    dragDropText: "यहां पत्ते का फोटो ड्रैग व ड्रॉप करें",
+    orBrowseText: "या अपने फोन / कंप्यूटर से फोटो चुनें",
+    chooseFileBtn: "📁 फोटो चुनें",
+    removeBtn: "✕ हटाएं",
+    sampleHeader: "⚡ या तुरंत जांच के लिए नमूना पत्ता चुनें:",
+    analyzeBtn: "🔍 सीएनएन मॉडल से पत्ते की जांच करें",
+    reportTitle: "सीएनएन रोग निदान रिपोर्ट",
+    reportSub: "कृत्रिम बुद्धिमत्ता आधारित त्वरित जांच परिणाम",
+    noImageTitle: "अभी तक कोई फोटो जांचा नहीं गया",
+    noImageDesc: "बाईं ओर से एक नमूना पत्ता चुनें या अपने खेत से पत्ते का फोटो अपलोड करें।",
+    symptomsTitle: "🔍 मुख्य लक्षण:",
+    organicTitle: "🌿 जैविक व प्राकृतिक उपचार",
+    chemicalTitle: "🧪 रासायनिक दवा व छिड़काव मात्रा",
+    preventiveTitle: "🛡️ रोकथाम व कृषि प्रबंधन"
+  },
+  mr: {
+    platformTagline: "५-इन-१ स्मार्ट कृषी डिजिटल मंच",
+    cnnStatusBadge: "सीएनएन मॉडेल व सेवा सक्रिय",
+    tabOverview: "🌾 विहंगावलोकन",
+    tabDashboard: "📊 विभाग १: शेतकरी डॅशबोर्ड",
+    tabDisease: "🍃 विभाग २: एआय रोग निदान (CNN)",
+    tabChatbot: "💬 विभाग ३: शेतकरी चॅटबॉट",
+    tabMarket: "🛒 विभाग ४: बाजारपेठ जोडणी",
+    tabAdvisory: "🌦️ विभाग ५: हवामान व सिंचन",
+    tabEstimators: "🧮 उत्पादन व माती अंदाज",
+    heroPill: "🌾 स्मार्ट कृषी डिजिटल मंच",
+    heroTitle: "प्रत्येक पिकासाठी योग्य<br><span class=\"highlight\">आणि अचूक निर्णय घ्या.</span>",
+    heroSubtitle: "पानावरील रोग ओळख, २४/७ शेतकरी चॅटबॉट, थेट बाजार विक्री आणि स्मार्ट सिंचन सल्ल्याने शेतकऱ्यांना समृद्ध करणारे डिजिटल व्यासपीठ.",
+    heroBtnDisease: "🍃 पानाची तपासणी करा <b>→</b>",
+    heroBtnDashboard: "📊 शेतकरी डॅशबोर्ड उघडा",
+    heroBtnChatbot: "💬 किसान एआयशी बोला",
+    mod2Title: "🍃 एआय पीक रोग निदान प्रणाली",
+    mod2Desc: "पिकाच्या पानाचा फोटो अपलोड करा आणि प्रशिक्षित सीएनएन मॉडेलद्वारे तत्काळ अचूक रोग निदान व फवारणी उपाय मिळवा.",
+    uploadCardTitle: "पानाचा फोटो अपलोड करा",
+    uploadCardSub: "टोमॅटो, बटाटा, भात, गहू, कापूस, मका, सफरचंद समर्थित",
+    dragDropText: "येथे पानाचा फोटो ड्रॅग आणि ड्रॉप करा",
+    orBrowseText: "किंवा तुमच्या मोबाईल / संगणकातून निवडा",
+    chooseFileBtn: "📁 फोटो निवडा",
+    removeBtn: "✕ काढा",
+    sampleHeader: "⚡ किंवा त्वरित चाचणीसाठी नमुना पान निवडा:",
+    analyzeBtn: "🔍 सीएनएन मॉडेलने पानाची तपासणी करा",
+    reportTitle: "सीएनएन रोग निदान अहवाल",
+    reportSub: "रिअल-टाइम कृत्रिम बुद्धिमत्ता तपासणी निष्कर्ष",
+    noImageTitle: "अद्याप कोणताही फोटो तपासला नाही",
+    noImageDesc: "डावीकडील नमुना पान निवडा किंवा शेतातील पाकाचा फोटो अपलोड करा.",
+    symptomsTitle: "🔍 मुख्य लक्षणे:",
+    organicTitle: "🌿 सेंद्रिय व जैविक उपाय",
+    chemicalTitle: "🧪 रासायनिक औषध व फवारणी प्रमाण",
+    preventiveTitle: "🛡️ प्रतिबंधात्मक कृषी उपाय"
+  }
+};
+
+function setLanguage(lang) {
+  if (!TRANSLATIONS[lang]) lang = "en";
+  localStorage.setItem("farm_connect_lang", lang);
+  const t = TRANSLATIONS[lang];
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key]) el.innerHTML = t[key];
+  });
+  const select = document.getElementById("langSelect");
+  if (select && select.value !== lang) select.value = lang;
+}
+
 // 1. Toast Notification Helper
 function showToast(message, type = "success") {
   let toast = document.getElementById("globalToast");
@@ -2566,6 +2720,17 @@ function switchModuleTab(targetId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Multilingual Initialization
+  const savedLang = localStorage.getItem("farm_connect_lang") || "en";
+  setLanguage(savedLang);
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) {
+    langSelect.value = savedLang;
+    langSelect.addEventListener("change", (e) => {
+      setLanguage(e.target.value);
+    });
+  }
+
   // Mobile Nav Toggle
   const mobileBtn = document.getElementById("mobileMenuBtn");
   const mobileNav = document.getElementById("mobileNav");
