@@ -1,6 +1,6 @@
 """Farm Connect — Smart Agriculture Platform.
 Self-contained Flask application serving all 5 agricultural modules.
-"""
+"""   
 
 import os
 from pathlib import Path
