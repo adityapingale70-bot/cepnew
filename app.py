@@ -1,6 +1,4 @@
-"""Farm Connect — Smart Agriculture Platform.
-Self-contained Flask application serving all 5 agricultural modules.
-"""   
+
 
 import os
 from pathlib import Path
@@ -31,9 +29,7 @@ MARKET_LISTINGS = [
     {"id": 3, "crop": "Nashik Red Onion", "farmer": "Sunil Patil", "location": "Lasalgaon", "quantity": 80, "price": 2150, "organic": True}
 ]
 
-# ------------------------------------------------------------------------------
-# Frontend Page Routes (Serves index.html directly)
-# ------------------------------------------------------------------------------
+
 @app.route("/")
 @app.route("/dashboard")
 @app.route("/disease-detection")
@@ -56,9 +52,7 @@ def serve_static(filename):
             return send_from_directory(str(folder), filename)
     return send_from_directory(str(BASE_DIR), filename)
 
-# ------------------------------------------------------------------------------
-# Module 1: Farmer Dashboard & Profile API
-# ------------------------------------------------------------------------------
+
 @app.route("/api/farmer/profile", methods=["GET", "POST"])
 def farmer_profile():
     global FARMER_PROFILE
@@ -75,9 +69,7 @@ def farmer_profile():
         return jsonify({"status": "success", "message": "Profile updated!", "farmer": FARMER_PROFILE})
     return jsonify({"status": "success", "farmer": FARMER_PROFILE})
 
-# ------------------------------------------------------------------------------
-# Module 2: AI Plant Disease Detection API
-# ------------------------------------------------------------------------------
+
 @app.route("/api/disease/analyze", methods=["POST"])
 def analyze_disease():
     sample = request.form.get("sample") or (request.get_json(silent=True) or {}).get("sample", "tomato_early_blight")
@@ -118,9 +110,7 @@ def analyze_disease():
     diag = database.get(sample, database["tomato_early_blight"])
     return jsonify({"status": "success", "diagnosis": diag})
 
-# ------------------------------------------------------------------------------
-# Module 3: Farmer Chatbot API
-# ------------------------------------------------------------------------------
+
 @app.route("/api/chatbot/message", methods=["POST"])
 def chatbot_message():
     data = request.get_json(silent=True) or {}
@@ -139,9 +129,7 @@ def chatbot_message():
         
     return jsonify({"status": "success", "reply": reply})
 
-# ------------------------------------------------------------------------------
-# Module 4: Farmer Market Connect API
-# ------------------------------------------------------------------------------
+
 @app.route("/api/market/listings", methods=["GET"])
 def get_listings():
     return jsonify({"status": "success", "listings": MARKET_LISTINGS})
@@ -165,9 +153,7 @@ def add_listing():
 def place_order():
     return jsonify({"status": "success", "message": "Trade order placed! Farmer notified via SMS."})
 
-# ------------------------------------------------------------------------------
-# Module 5: Crop Advisory & Weather API
-# ------------------------------------------------------------------------------
+
 @app.route("/api/advisory/irrigation-calculate", methods=["POST"])
 def irrigation_calculate():
     data = request.get_json(silent=True) or {}
