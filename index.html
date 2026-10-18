@@ -853,9 +853,74 @@
     }
     .chip-sm:hover { background: var(--green-subtle); border-color: var(--green-primary); }
 
-    .chat-input-bar { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--border-color); background: #fff; }
+    .chat-input-bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--border-color); background: #fff; }
     .chat-input-bar input { flex: 1; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.92rem; outline: none; }
     .chat-input-bar input:focus { border-color: var(--green-primary); }
+
+    /* Voice Assistant Styles */
+    .btn-voice-mic {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(46, 125, 50, 0.35);
+      background: rgba(46, 125, 50, 0.1);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-voice-mic:hover {
+      background: rgba(46, 125, 50, 0.22);
+      transform: scale(1.06);
+    }
+    .btn-voice-mic.listening {
+      background: #ef4444;
+      color: #fff;
+      border-color: #dc2626;
+      animation: micPulse 1.2s infinite;
+    }
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); transform: scale(1); }
+      70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); transform: scale(1.08); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); transform: scale(1); }
+    }
+    .voice-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 16px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    .btn-tts-speak {
+      background: rgba(46, 125, 50, 0.08);
+      border: 1px solid rgba(46, 125, 50, 0.25);
+      color: var(--green-primary);
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-tts-speak:hover {
+      background: var(--green-primary);
+      color: #fff;
+    }
+    .btn-tts-speak.speaking {
+      background: #fef08a;
+      color: #854d0e;
+      border-color: #fde047;
+      animation: pulse 1s infinite;
+    }
 
     /* Module 4: Market Connect */
     .market-tabs {
@@ -1962,8 +2027,21 @@
           <button type="button" class="chip-sm" data-question="How to improve acidic soil?">🧪 Soil pH Balance</button>
         </div>
 
+        <div class="voice-controls-bar">
+          <div id="voiceStatusBadge" style="display:inline-flex; align-items:center; gap:6px;">
+            <span>🎙️</span> <span id="voiceStatusText">Tap 🎙️ to speak in Hindi (हिंदी), Marathi (मराठी), or English</span>
+          </div>
+          <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:600;">
+            <input type="checkbox" id="autoVoiceToggle" checked>
+            <span>🔊 Speak Answers Aloud</span>
+          </label>
+        </div>
+
         <form id="chatForm" class="chat-input-bar">
-          <input type="text" id="chatInput" placeholder="Ask about crops, fertilizers, irrigation, pests, soil..." autocomplete="off" required>
+          <button type="button" class="btn-voice-mic" id="btnVoiceMic" title="Tap to speak in Hindi or Marathi">
+            <span class="mic-icon">🎙️</span>
+          </button>
+          <input type="text" id="chatInput" placeholder="Type question or tap 🎙️ to speak in Hindi / Marathi..." autocomplete="off" required>
           <button type="submit" class="btn btn-primary" id="btnSendMsg">
             Send <b>↗</b>
           </button>
@@ -3930,34 +4008,77 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data || !data.success) {
         // Smart Agronomic Chatbot fallback
         const q = text.toLowerCase();
+        const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+        const hasDevanagari = /[\u0900-\u097F]/.test(text);
+        const isMarathi = currentLang === "mr" || /(करपा|खत|पाणी|पिका|शेती|लागवड|बाजार|बियाणे|फवारणी|औषध)/.test(text);
+        const isHindi = !isMarathi && (currentLang === "hi" || hasDevanagari || /(खाद|यूरिया|दवा|छिड़काव|खेती|फसल|सिंचाई|मंडी)/.test(text));
+
         let answer = "Namaste Kisan Bhai! For healthy crops, maintain adequate root zone moisture, inspect leaf undersides for pests once a week, and apply balanced fertilizers according to soil test recommendations.";
         let tips = ["Scout field early morning", "Rotate crops each season", "Avoid waterlogging"];
         let queries = ["What fertilizer for wheat?", "How to treat leaf blight?", "Today mandi prices"];
 
-        if (q.includes("blight") || q.includes("leaf") || q.includes("spot") || q.includes("fungus") || q.includes("disease")) {
-          answer = "For fungal leaf spots and blight, spray Mancozeb 75% WP @ 2.5 g/L or Azoxystrobin @ 1 ml/L. For organic prevention, spray cold-pressed Neem oil (5ml/L) and remove infected lower foliage.";
-          tips = ["Apply spray in early morning or evening", "Ensure good plant spacing for air circulation", "Avoid overhead sprinkler irrigation"];
-          queries = ["Organic pesticide formula", "How to treat rust?", "Tomato leaf curl remedy"];
-        } else if (q.includes("fertilizer") || q.includes("urea") || q.includes("dap") || q.includes("npk") || q.includes("nitrogen")) {
-          answer = "Apply basal NPK dose during land preparation. Split nitrogen (Urea) into 2-3 top dressings: first at crown root initiation / tillering, and second at jointing/flowering stage.";
-          tips = ["Never apply urea on wet foliage", "Incorporate organic FYM @ 5 tonnes/ha", "Check soil pH for nutrient absorption"];
-          queries = ["Fertilizer calculator", "How much DAP per acre?", "Micronutrient spray timing"];
-        } else if (q.includes("water") || q.includes("irrigation") || q.includes("rain") || q.includes("weather")) {
-          answer = "Ensure critical irrigation at germination, tillering, flowering, and grain filling stages. If rain is expected in the next 24-48 hours, withhold irrigation to prevent lodging and fungal root rots.";
-          tips = ["Use drip or furrow irrigation to save water", "Maintain proper field drainage channels", "Check soil moisture before irrigating"];
-          queries = ["7-day weather forecast", "Drip irrigation subsidy", "Wheat critical stages"];
-        } else if (q.includes("mandi") || q.includes("price") || q.includes("rate") || q.includes("market") || q.includes("sell")) {
-          answer = "Current benchmark modal prices: Wheat ₹2,425/qtl, Rice ₹2,320/qtl, Cotton ₹7,120/qtl, Tomato ₹1,850/qtl. Check Module 4 'Farmer Market Connect' above for active listings and direct buyer inquiries!";
-          tips = ["Clean and grade produce before market entry", "Target e-NAM mandis for transparent rates", "Store produce during peak supply gluts"];
-          queries = ["View mandi benchmarks", "List my crop for sale", "MSP rates 2026"];
-        } else if (q.includes("wheat")) {
-          answer = "Wheat performs best at 18-24°C in well-drained loamy soil. Critical irrigation stages are Crown Root Initiation (21 days after sowing) and Flowering stage. Watch out for yellow rust in humid conditions.";
-          tips = ["Sow between Nov 1-25 for optimal yield", "Seed rate: 40 kg/acre treated with fungicide", "Maintain 20cm row spacing"];
-          queries = ["Wheat rust treatment", "Wheat fertilizer schedule", "Yield estimation"];
-        } else if (q.includes("tomato")) {
-          answer = "Tomatoes need 21-29°C temperature and well-drained soil rich in organic matter. Stake plants to keep fruits off soil and prevent Early & Late Blight.";
-          tips = ["Mulch around base to conserve moisture", "Prune lower suckers for larger fruit size", "Spray boron during flowering to prevent blossom drop"];
-          queries = ["Tomato early blight symptoms", "Tomato market price", "Drip schedule for tomato"];
+        if (isMarathi) {
+          if (q.includes("खत") || q.includes("युरिया") || q.includes("dap") || q.includes("npk")) {
+            answer = "पिकास खत देताना: पेरणीच्या वेळी DAP व पोटॅश द्यावे. युरियाची मात्रा २१ दिवसांच्या अंतराने विभागून द्यावी. पानावरील दव सुकल्यावरच खताची मात्रा टाकावी.";
+            tips = ["पानावरील दव सुकल्यावर युरिया टाका", "सेंद्रिय शेणखत एकरी ५ टन वापरा", "माती परीक्षणाप्रमाणे खतांचा वापर करा"];
+            queries = ["गहू खत नियोजन", "कांद्यासाठी खते", "सूक्ष्म अन्नद्रव्य फवारणी"];
+          } else if (q.includes("रोग") || q.includes("करपा") || q.includes("पान") || q.includes("बुरशी") || q.includes("कीड")) {
+            answer = "पानावरील करपा किंवा बुरशीजन्य रोगांसाठी मँकोझेब ७५% WP हे औषध २.५ ग्रॅम प्रति लिटर पाण्यात मिसळून फवारावे. सेंद्रिय नियंत्रणासाठी ५% निंबोळी अर्क (Neem Oil) वापरावे.";
+            tips = ["सकाळी किंवा संध्याकाळी फवारणी करा", "झाडांमध्ये हवा खेळती राहू द्या", "रोगट पाने शेतातून काढून नष्ट करा"];
+            queries = ["टोमॅटो करपा उपाय", "जैविक कीटकनाशक", "तुडतुडे नियंत्रण"];
+          } else if (q.includes("भाव") || q.includes("बाजार") || q.includes("मंडी") || q.includes("विक्री")) {
+            answer = "आजचे बाजारभाव: गहू ₹२,३५०/क्विंटल (खन्ना), कांदा ₹२,४८०/क्विंटल (लासलगाव बाजार समिती), कापूस ₹७,१००/क्विंटल, टोमॅटो ₹१,८५०/क्विंटल. थेट खरेदी-विक्रीसाठी वरील 'बाजारपेठ' विभाग पहा.";
+            tips = ["माल प्रतवारी करून बाजारात आणा", "हमीभाव तपासून विक्री करा", "थेट व्यापारी जोडणी वापरा"];
+            queries = ["लासलगाव कांदा भाव", "थेट शेतमाल विक्री", "हमीभाव २०२६"];
+          } else {
+            answer = "नमस्कार शेतकरी मित्रा! आपल्या पिकांच्या चांगल्या वाढीसाठी योग्य ओलावा राखा, आठवड्यातून एकदा पानांखाली किडींची पाहणी करा आणि संतुलित खतांचा वापर करा. मी आपल्याला सिंचन, खते व रोग नियंत्रणात मदत करू शकतो.";
+            tips = ["पिकांची नियमित पाहणी करा", "योग्य वेळी पाणी द्या", "सेंद्रिय खतांचा वापर वाढवा"];
+            queries = ["गहू खत नियोजन", "कांदा करपा नियंत्रण", "सिंचन वेळापत्रक"];
+          }
+        } else if (isHindi) {
+          if (q.includes("खाद") || q.includes("यूरिया") || q.includes("dap") || q.includes("npk")) {
+            answer = "फसल में खाद देने के लिए: पहली खुराक (DAP व पोटाश) बुवाई के समय दें। यूरिया को 2 से 3 भागों में बांटकर पहली सिंचाई (21 दिन बाद) और दूसरी सिंचाई पर छिड़कें। पत्तों पर ओस होने पर यूरिया न डालें।";
+            tips = ["पत्तियों पर ओस सूखने के बाद ही यूरिया डालें", "गोबर की सड़ी खाद 5 टन प्रति हेक्टेयर डालें", "मिट्टी परीक्षण के अनुसार खाद दें"];
+            queries = ["गेहूं में खाद का समय", "टमाटर के लिए उर्वरक", "डीएपी की सही मात्रा"];
+          } else if (q.includes("रोग") || q.includes("ब्लाइट") || q.includes("पत्ता") || q.includes("झुलसा") || q.includes("कीट")) {
+            answer = "फंगल रोग व झुलसा (ब्लाइट) नियंत्रण के लिए मेंकोजेब 75% WP दवा 2.5 ग्राम प्रति लीटर पानी में मिलाकर छिड़काव करें। जैविक उपाय के लिए 5% नीम तेल का छिड़काव करें।";
+            tips = ["सुबह या शाम के समय छिड़काव करें", "खेत में जलभराव न होने दें", "रोगग्रस्त पत्तों को खेत से हटा दें"];
+            queries = ["टमाटर झुलसा रोग उपाय", "जैविक कीटनाशक कैसे बनाएं", "गेहूं का पीला रतुआ"];
+          } else if (q.includes("भाव") || q.includes("मंडी") || q.includes("रेट") || q.includes("बेचना")) {
+            answer = "आज के प्रमुख मंडी भाव: गेहूं ₹२,३५०/क्विंटल (खन्ना), प्याज ₹२,४८०/क्विंटल (लासलगांव मंडी), कपास ₹७,१००/क्विंटल, टमाटर ₹१,८५०/क्विंटल। सीधा व्यापार करने के लिए 'मंडी बाजार' विभाग देखें।";
+            tips = ["फसल की ग्रेडिंग करके मंडी ले जाएं", "न्यूनतम समर्थन मूल्य (MSP) अवश्य जांचें", "सीधा खरीदार से संपर्क करें"];
+            queries = ["लासलगांव प्याज मंडी भाव", "गेहूं का सरकारी भाव", "सीधा फसल बेचें"];
+          } else {
+            answer = "नमस्ते किसान भाई! फसलों के अच्छे उत्पादन के लिए खेत में पर्याप्त नमी रखें, सप्ताह में एक बार पत्तों के नीचे कीटों की जांच करें और संतुलित खाद डालें। आप मुझसे खाद, सिंचाई व रोग नियंत्रण पर पूछ सकते हैं।";
+            tips = ["सुबह खेत का मुआयना करें", "फसल चक्र अपनाएं", "जल निकासी की उचित व्यवस्था रखें"];
+            queries = ["गेहूं की खेती की जानकारी", "टमाटर के रोग व उपचार", "सिंचाई का समय"];
+          }
+        } else {
+          if (q.includes("blight") || q.includes("leaf") || q.includes("spot") || q.includes("fungus") || q.includes("disease")) {
+            answer = "For fungal leaf spots and blight, spray Mancozeb 75% WP @ 2.5 g/L or Azoxystrobin @ 1 ml/L. For organic prevention, spray cold-pressed Neem oil (5ml/L) and remove infected lower foliage.";
+            tips = ["Apply spray in early morning or evening", "Ensure good plant spacing for air circulation", "Avoid overhead sprinkler irrigation"];
+            queries = ["Organic pesticide formula", "How to treat rust?", "Tomato leaf curl remedy"];
+          } else if (q.includes("fertilizer") || q.includes("urea") || q.includes("dap") || q.includes("npk") || q.includes("nitrogen")) {
+            answer = "Apply basal NPK dose during land preparation. Split nitrogen (Urea) into 2-3 top dressings: first at crown root initiation / tillering, and second at jointing/flowering stage.";
+            tips = ["Never apply urea on wet foliage", "Incorporate organic FYM @ 5 tonnes/ha", "Check soil pH for nutrient absorption"];
+            queries = ["Fertilizer calculator", "How much DAP per acre?", "Micronutrient spray timing"];
+          } else if (q.includes("water") || q.includes("irrigation") || q.includes("rain") || q.includes("weather")) {
+            answer = "Ensure critical irrigation at germination, tillering, flowering, and grain filling stages. If rain is expected in the next 24-48 hours, withhold irrigation to prevent lodging and fungal root rots.";
+            tips = ["Use drip or furrow irrigation to save water", "Maintain proper field drainage channels", "Check soil moisture before irrigating"];
+            queries = ["7-day weather forecast", "Drip irrigation subsidy", "Wheat critical stages"];
+          } else if (q.includes("mandi") || q.includes("price") || q.includes("rate") || q.includes("market") || q.includes("sell")) {
+            answer = "Current benchmark modal prices: Wheat ₹2,425/qtl, Rice ₹2,320/qtl, Cotton ₹7,120/qtl, Tomato ₹1,850/qtl. Check Module 4 'Farmer Market Connect' above for active listings and direct buyer inquiries!";
+            tips = ["Clean and grade produce before market entry", "Target e-NAM mandis for transparent rates", "Store produce during peak supply gluts"];
+            queries = ["View mandi benchmarks", "List my crop for sale", "MSP rates 2026"];
+          } else if (q.includes("wheat")) {
+            answer = "Wheat performs best at 18-24°C in well-drained loamy soil. Critical irrigation stages are Crown Root Initiation (21 days after sowing) and Flowering stage. Watch out for yellow rust in humid conditions.";
+            tips = ["Sow between Nov 1-25 for optimal yield", "Seed rate: 40 kg/acre treated with fungicide", "Maintain 20cm row spacing"];
+            queries = ["Wheat rust treatment", "Wheat fertilizer schedule", "Yield estimation"];
+          } else if (q.includes("tomato")) {
+            answer = "Tomatoes need 21-29°C temperature and well-drained soil rich in organic matter. Stake plants to keep fruits off soil and prevent Early & Late Blight.";
+            tips = ["Mulch around base to conserve moisture", "Prune lower suckers for larger fruit size", "Spray boron during flowering to prevent blossom drop"];
+            queries = ["Tomato early blight symptoms", "Tomato market price", "Drip schedule for tomato"];
+          }
         }
 
         data = {
@@ -4004,10 +4125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (reply.quick_tips && reply.quick_tips.length > 0) {
       tips = `<div class="msg-tips"><b>Key Points:</b><ul>${reply.quick_tips.map(t => `<li>${escapeHtml(t)}</li>`).join("")}</ul></div>`;
     }
+    const safeAnswer = escapeHtml(reply.answer).replace(/"/g, '&quot;');
     msg.innerHTML = `
       <div class="msg-avatar">🌱</div>
       <div class="msg-content">
-        <div class="category-tag">${escapeHtml(reply.category || "Agronomic Advice")}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
+          <div class="category-tag">${escapeHtml(reply.category || "Agronomic Advice")}</div>
+          <button type="button" class="btn-tts-speak" data-text="${safeAnswer}" title="Listen to this advice">
+            <span>🔊</span> <span class="tts-label">Listen</span>
+          </button>
+        </div>
         <div class="msg-bubble">
           <p>${escapeHtml(reply.answer).replace(/\n/g, "<br>")}</p>
           ${tips}
@@ -4016,6 +4143,13 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
     chatMessages.appendChild(msg);
+
+    // Speak aloud if autoVoiceToggle is enabled
+    const autoVoice = document.getElementById("autoVoiceToggle");
+    if (autoVoice && autoVoice.checked) {
+      const speakBtn = msg.querySelector(".btn-tts-speak");
+      speakText(reply.answer, speakBtn);
+    }
   }
 
   function appendTypingInd() {
@@ -4043,6 +4177,180 @@ document.addEventListener("DOMContentLoaded", () => {
       chipsRow.appendChild(b);
     });
   }
+
+  // ==========================================
+  // KISAN VOICE ASSISTANT (Web Speech STT & TTS)
+  // ==========================================
+  const btnVoiceMic = document.getElementById("btnVoiceMic");
+  const voiceStatusText = document.getElementById("voiceStatusText");
+  const autoVoiceToggle = document.getElementById("autoVoiceToggle");
+  let currentSpeakingBtn = null;
+
+  // Speech Recognition (STT - Speech to Text)
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let isListening = false;
+
+  function getVoiceLang() {
+    const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+    if (currentLang === "hi") return "hi-IN";
+    if (currentLang === "mr") return "mr-IN";
+    return "en-IN";
+  }
+
+  function getVoiceStatusMessage(state) {
+    const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+    if (state === "listening") {
+      if (currentLang === "hi") return "🔴 सुन रहा हूँ... अभी बोलिए (हिंदी / English)";
+      if (currentLang === "mr") return "🔴 ऐकत आहे... आता बोला (मराठी / English)";
+      return "🔴 Listening... Speak now in Hindi, Marathi or English";
+    }
+    if (state === "processing") {
+      if (currentLang === "hi") return "⚡ सवाल पर विचार हो रहा है...";
+      if (currentLang === "mr") return "⚡ प्रश्नावर प्रक्रिया सुरू आहे...";
+      return "⚡ Processing your voice query...";
+    }
+    if (currentLang === "hi") return "हिंदी, मराठी या अंग्रेजी में पूछने के लिए 🎙️ दबाएं";
+    if (currentLang === "mr") return "मराठी, हिंदी किंवा इंग्रजीत विचारण्यासाठी 🎙️ दाबा";
+    return "Tap 🎙️ to speak in Hindi, Marathi, or English";
+  }
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      isListening = true;
+      if (btnVoiceMic) btnVoiceMic.classList.add("listening");
+      if (voiceStatusText) voiceStatusText.textContent = getVoiceStatusMessage("listening");
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      if (transcript && transcript.trim()) {
+        if (voiceStatusText) voiceStatusText.textContent = getVoiceStatusMessage("processing");
+        if (chatInput) chatInput.value = transcript.trim();
+        sendChatMessage(transcript.trim());
+        if (chatInput) chatInput.value = "";
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.warn("Speech recognition error:", event.error);
+      isListening = false;
+      if (btnVoiceMic) btnVoiceMic.classList.remove("listening");
+      if (voiceStatusText) voiceStatusText.textContent = getVoiceStatusMessage("ready");
+      if (event.error === "not-allowed") {
+        showToast("Microphone permission denied. Please allow microphone in browser.", "error");
+      } else if (event.error === "no-speech") {
+        showToast("No speech detected. Please tap mic and speak clearly.", "info");
+      }
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      if (btnVoiceMic) btnVoiceMic.classList.remove("listening");
+      if (voiceStatusText) voiceStatusText.textContent = getVoiceStatusMessage("ready");
+    };
+  }
+
+  if (btnVoiceMic) {
+    btnVoiceMic.addEventListener("click", () => {
+      if (!SpeechRecognition) {
+        showToast("Voice recognition not supported in this browser. Please use Chrome or Edge.", "error");
+        return;
+      }
+
+      if (isListening) {
+        recognition.stop();
+      } else {
+        try {
+          recognition.lang = getVoiceLang();
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      }
+    });
+  }
+
+  // Speech Synthesis (TTS - Text to Speech)
+  function speakText(rawText, triggerBtn = null) {
+    if (!("speechSynthesis" in window)) {
+      showToast("Speech synthesis not supported in this browser.", "info");
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    if (currentSpeakingBtn) {
+      setSpeakingBtnState(currentSpeakingBtn, false);
+      currentSpeakingBtn = null;
+    }
+
+    if (!rawText) return;
+
+    // Clean text: strip markdown symbols, asterisks, URLs, HTML tags
+    const cleanText = rawText
+      .replace(/<[^>]*>/g, "")
+      .replace(/[#*`_~•]/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .trim();
+
+    const langCode = getVoiceLang();
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = langCode;
+    utterance.rate = 0.95; // Natural cadence for agricultural advice
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const prefix = langCode.slice(0, 2);
+    const matchedVoice = voices.find(v => v.lang.startsWith(prefix) || v.lang.replace('_','-').startsWith(prefix));
+    if (matchedVoice) utterance.voice = matchedVoice;
+
+    if (triggerBtn) {
+      currentSpeakingBtn = triggerBtn;
+      setSpeakingBtnState(triggerBtn, true);
+    }
+
+    utterance.onend = () => {
+      if (triggerBtn) setSpeakingBtnState(triggerBtn, false);
+      currentSpeakingBtn = null;
+    };
+
+    utterance.onerror = () => {
+      if (triggerBtn) setSpeakingBtnState(triggerBtn, false);
+      currentSpeakingBtn = null;
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function setSpeakingBtnState(btn, isSpeaking) {
+    if (!btn) return;
+    if (isSpeaking) {
+      btn.classList.add("speaking");
+      btn.innerHTML = `<span>⏹️</span> <span class="tts-label">Stop</span>`;
+    } else {
+      btn.classList.remove("speaking");
+      btn.innerHTML = `<span>🔊</span> <span class="tts-label">Listen</span>`;
+    }
+  }
+
+  // Click handler for all speaker buttons in messages
+  document.addEventListener("click", (e) => {
+    const speakBtn = e.target.closest(".btn-tts-speak");
+    if (speakBtn && speakBtn.dataset.text) {
+      if (window.speechSynthesis && window.speechSynthesis.speaking && currentSpeakingBtn === speakBtn) {
+        window.speechSynthesis.cancel();
+        setSpeakingBtnState(speakBtn, false);
+        currentSpeakingBtn = null;
+      } else {
+        speakText(speakBtn.dataset.text, speakBtn);
+      }
+    }
+  });
 
   // ==========================================
   // MODULE 4: MARKET CONNECT SCRIPT
