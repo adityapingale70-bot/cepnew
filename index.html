@@ -717,6 +717,34 @@
     .treatment-title { font-size: 0.82rem; font-weight: 700; margin-bottom: 3px; color: #1e293b; }
     .treatment-box p { font-size: 0.82rem; color: #334155; margin: 0; line-height: 1.45; }
 
+    .whatsapp-share-action { margin: 16px 0 14px; }
+    .btn-whatsapp-share {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 18px;
+      background: #25D366;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28);
+      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-whatsapp-share:hover {
+      background: #1eb855;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.38);
+    }
+    .btn-whatsapp-share:active {
+      transform: translateY(0);
+    }
+
     .top-predictions-section h5 { font-size: 0.82rem; margin-bottom: 8px; color: #475569; }
     .pred-bar-item { margin-bottom: 7px; }
     .pred-bar-labels { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 2px; }
@@ -1600,6 +1628,12 @@
               </div>
             </div>
 
+            <div class="whatsapp-share-action">
+              <button type="button" class="btn-whatsapp-share" id="btnShareWhatsApp">
+                <span>📲</span> <span data-i18n="shareWhatsAppBtn">Send Prescription to WhatsApp</span>
+              </button>
+            </div>
+
             <div class="top-predictions-section" id="topPredSection">
               <h5>📊 Confidence Breakdown across Classes:</h5>
               <div class="pred-bars-list" id="predBarsList"></div>
@@ -1927,9 +1961,14 @@
 
     <!-- Tab 2: Mandi Rates Table -->
     <div class="tab-pane" id="mandiTab" style="display:none">
-      <div class="mandi-intro">
-        <h3>📈 Live Mandi Benchmarks vs Minimum Support Price (MSP)</h3>
-        <p>Compare actual APMC terminal market arrivals against government floor prices to decide the best selling window.</p>
+      <div class="mandi-intro" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h3>📈 Live Mandi Benchmarks vs Minimum Support Price (MSP)</h3>
+          <p>Compare actual APMC terminal market arrivals against government floor prices to decide the best selling window.</p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnShareMandiWhatsApp" style="background:#25D366; color:#fff; border:none; font-weight:700; display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; cursor:pointer;">
+          <span>📲</span> <span data-i18n="shareMandiWhatsAppBtn">Share Mandi Rates on WhatsApp</span>
+        </button>
       </div>
       <div class="table-responsive">
         <table class="mandi-table">
@@ -2598,7 +2637,9 @@ const TRANSLATIONS = {
     symptomsTitle: "🔍 Key Symptoms:",
     organicTitle: "🌿 Organic & Bio Treatment",
     chemicalTitle: "🧪 Chemical Recommendation & Dose",
-    preventiveTitle: "🛡️ Preventive Cultural Measures"
+    preventiveTitle: "🛡️ Preventive Cultural Measures",
+    shareWhatsAppBtn: "Send Prescription to WhatsApp",
+    shareMandiWhatsAppBtn: "Share Mandi Rates on WhatsApp"
   },
   hi: {
     platformTagline: "५-इन-१ स्मार्ट कृषि डिजिटल मंच",
@@ -2633,14 +2674,16 @@ const TRANSLATIONS = {
     symptomsTitle: "🔍 मुख्य लक्षण:",
     organicTitle: "🌿 जैविक व प्राकृतिक उपचार",
     chemicalTitle: "🧪 रासायनिक दवा व छिड़काव मात्रा",
-    preventiveTitle: "🛡️ रोकथाम व कृषि प्रबंधन"
+    preventiveTitle: "🛡️ रोकथाम व कृषि प्रबंधन",
+    shareWhatsAppBtn: "व्हाट्सऐप पर पर्चा भेजें",
+    shareMandiWhatsAppBtn: "मंडी भाव व्हाट्सऐप पर भेजें"
   },
   mr: {
     platformTagline: "५-इन-१ स्मार्ट कृषी डिजिटल मंच",
     cnnStatusBadge: "सीएनएन मॉडेल व सेवा सक्रिय",
     tabOverview: "🌾 विहंगावलोकन",
     tabDashboard: "📊 विभाग १: शेतकरी डॅशबोर्ड",
-    tabDisease: "🍃 विभाग २: एआय रोग निदान (CNN)",
+    tabDisease: "🍃 विभाग २: एआई रोग निदान (CNN)",
     tabChatbot: "💬 विभाग ३: शेतकरी चॅटबॉट",
     tabMarket: "🛒 विभाग ४: बाजारपेठ जोडणी",
     tabAdvisory: "🌦️ विभाग ५: हवामान व सिंचन",
@@ -2651,7 +2694,7 @@ const TRANSLATIONS = {
     heroBtnDisease: "🍃 पानाची तपासणी करा <b>→</b>",
     heroBtnDashboard: "📊 शेतकरी डॅशबोर्ड उघडा",
     heroBtnChatbot: "💬 किसान एआयशी बोला",
-    mod2Title: "🍃 एआय पीक रोग निदान प्रणाली",
+    mod2Title: "🍃 एआई पीक रोग निदान प्रणाली",
     mod2Desc: "पिकाच्या पानाचा फोटो अपलोड करा आणि प्रशिक्षित सीएनएन मॉडेलद्वारे तत्काळ अचूक रोग निदान व फवारणी उपाय मिळवा.",
     uploadCardTitle: "पानाचा फोटो अपलोड करा",
     uploadCardSub: "टोमॅटो, बटाटा, भात, गहू, कापूस, मका, सफरचंद समर्थित",
@@ -2668,7 +2711,9 @@ const TRANSLATIONS = {
     symptomsTitle: "🔍 मुख्य लक्षणे:",
     organicTitle: "🌿 सेंद्रिय व जैविक उपाय",
     chemicalTitle: "🧪 रासायनिक औषध व फवारणी प्रमाण",
-    preventiveTitle: "🛡️ प्रतिबंधात्मक कृषी उपाय"
+    preventiveTitle: "🛡️ प्रतिबंधात्मक कृषी उपाय",
+    shareWhatsAppBtn: "व्हॉट्सॲपवर औषध सल्ला पाठवा",
+    shareMandiWhatsAppBtn: "बाजारभाव व्हॉट्सॲपवर पाठवा"
   }
 };
 
@@ -3136,6 +3181,75 @@ document.addEventListener("DOMContentLoaded", () => {
     resultsCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  // 1-Click WhatsApp Disease Prescription Share
+  const shareBtn = document.getElementById("btnShareWhatsApp");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", () => {
+      const crop = document.getElementById("diagCrop") ? document.getElementById("diagCrop").textContent : "Crop";
+      const disease = document.getElementById("diagDisease") ? document.getElementById("diagDisease").textContent : "Disease";
+      const pathogen = document.getElementById("diagPathogen") ? document.getElementById("diagPathogen").textContent : "";
+      const confidence = document.getElementById("diagConfidence") ? document.getElementById("diagConfidence").textContent : "";
+      const severity = document.getElementById("diagSeverity") ? document.getElementById("diagSeverity").textContent : "";
+      const symptoms = document.getElementById("diagSymptoms") ? document.getElementById("diagSymptoms").textContent : "";
+      const chemical = document.getElementById("diagChemical") ? document.getElementById("diagChemical").textContent : "";
+      const organic = document.getElementById("diagOrganic") ? document.getElementById("diagOrganic").textContent : "";
+      const prevention = document.getElementById("diagPrevention") ? document.getElementById("diagPrevention").textContent : "";
+
+      const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+
+      let message = "";
+      if (currentLang === "hi") {
+        message = `🌿 *फार्म कनेक्ट — फसल रोग निदान व पर्चा* 🌿\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `🌱 *फसल:* ${crop}\n` +
+                  `⚠️ *रोग:* ${disease}\n` +
+                  `🔬 *${pathogen}*\n` +
+                  `📊 *एआई मॉडल विश्वसनीयता:* ${confidence}\n` +
+                  `🔴 *गंभीरता:* ${severity}\n\n` +
+                  `🔍 *मुख्य लक्षण:*\n${symptoms}\n\n` +
+                  `🧪 *रासायनिक दवा व छिड़काव मात्रा:*\n${chemical}\n\n` +
+                  `🌿 *जैविक व प्राकृतिक उपचार:*\n${organic}\n\n` +
+                  `🛡️ *कृषि प्रबंधन व रोकथाम:*\n${prevention}\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `👨‍🌾 *यह पर्चा अपने नजदीकी कृषि सेवा केंद्र या खाद-दवा विक्रेता को दिखाएं।*\n` +
+                  `🔗 FarmConnect AI: https://cepnew.vercel.app`;
+      } else if (currentLang === "mr") {
+        message = `🌿 *फार्म कनेक्ट — पीक रोग निदान व कृषी सल्ला* 🌿\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `🌱 *पीक:* ${crop}\n` +
+                  `⚠️ *रोग:* ${disease}\n` +
+                  `🔬 *${pathogen}*\n` +
+                  `📊 *एआय अचूकता:* ${confidence}\n` +
+                  `🔴 *तीव्रता:* ${severity}\n\n` +
+                  `🔍 *मुख्य लक्षणे:*\n${symptoms}\n\n` +
+                  `🧪 *रासायनिक औषध व फवारणी प्रमाण:*\n${chemical}\n\n` +
+                  `🌿 *सेंद्रिय व जैविक नियंत्रण:*\n${organic}\n\n` +
+                  `🛡️ *प्रतिबंधात्मक कृषी उपाय:*\n${prevention}\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `👨‍🌾 *हा औषध सल्ला तुमच्या स्थानिक कृषी सेवा केंद्रात दाखवा.*\n` +
+                  `🔗 FarmConnect AI: https://cepnew.vercel.app`;
+      } else {
+        message = `🌿 *FARM CONNECT — PLANT HEALTH PRESCRIPTION* 🌿\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `🌱 *Crop:* ${crop}\n` +
+                  `⚠️ *Diagnosis:* ${disease}\n` +
+                  `🔬 *${pathogen}*\n` +
+                  `📊 *CNN AI Confidence:* ${confidence}\n` +
+                  `🔴 *Severity:* ${severity}\n\n` +
+                  `🔍 *Key Symptoms:*\n${symptoms}\n\n` +
+                  `🧪 *Chemical Recommendation & Dose:*\n${chemical}\n\n` +
+                  `🌿 *Organic & Bio Treatment:*\n${organic}\n\n` +
+                  `🛡️ *Preventive Agronomic Measures:*\n${prevention}\n` +
+                  `━━━━━━━━━━━━━━━━━━━━\n` +
+                  `👨‍🌾 *Show this prescription to your local Krishi Seva Kendra / Agro-chemical store.*\n` +
+                  `🔗 FarmConnect AI: https://cepnew.vercel.app`;
+      }
+
+      const encoded = encodeURIComponent(message);
+      window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
+    });
+  }
+
   // ==========================================
   // MODULE 3: FARMER CHATBOT SCRIPT
   // ==========================================
@@ -3420,6 +3534,55 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  // 1-Click WhatsApp Mandi Rates Share
+  const mandiShareBtn = document.getElementById("btnShareMandiWhatsApp");
+  if (mandiShareBtn) {
+    mandiShareBtn.addEventListener("click", () => {
+      const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+      let msg = "";
+
+      if (currentLang === "hi") {
+        msg = `📈 *फार्म कनेक्ट — दैनिक कृषि उपज मंडी भाव बुलेटिन* 📈\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `🌾 *गेहूं (Wheat):* ₹२,३५० / क्विंटल (खन्ना मंडी, पंजाब)\n` +
+              `🌾 *बासमती धान (Rice):* ₹४,१५० / क्विंटल (करनाल मंडी, हरियाणा)\n` +
+              `🧅 *प्याज (Onion):* ₹२,४८० / क्विंटल (लासलगांव मंडी, महाराष्ट्र)\n` +
+              `⚪ *कपास (Cotton):* ₹७,१०० / क्विंटल (राजकोट मंडी, गुजरात)\n` +
+              `🌱 *सोयाबीन (Soybean):* ₹४,८२० / क्विंटल (इंदौर मंडी, म.प्र.)\n` +
+              `🍅 *टमाटर (Tomato):* ₹१,८५० / क्विंटल (कोलार मंडी, कर्नाटक)\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `💡 *सुझाव:* मंडी में माल ले जाने से पूर्व न्यूनतम समर्थन मूल्य (MSP) एवं दैनिक भाव अवश्य जांचें।\n` +
+              `🔗 लाइव मंडी भाव व सीधा व्यापार: https://cepnew.vercel.app`;
+      } else if (currentLang === "mr") {
+        msg = `📈 *फार्म कनेक्ट — आजचे थेट कृषी उत्पन्न बाजार समिती (APMC) बाजारभाव* 📈\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `🌾 *गहू:* ₹२,३५० / क्विंटल (खन्ना बाजारपेठ)\n` +
+              `🌾 *बासुमती भात:* ₹४,१५० / क्विंटल (कर्नाल बाजारपेठ)\n` +
+              `🧅 *कांदा:* ₹२,४८० / क्विंटल (लासलगाव बाजार समिती)\n` +
+              `⚪ *कापूस:* ₹७,१०० / क्विंटल (राजकोट बाजारपेठ)\n` +
+              `🌱 *सोयाबीन:* ₹४,८२० / क्विंटल (इंदूर बाजारपेठ)\n` +
+              `🍅 *टोमॅटो:* ₹१,८५० / क्विंटल (कोलार बाजारपेठ)\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `💡 *सल्ला:* शेतकरी मित्रांनो, आपला शेतमाल विक्रीस काढण्यापूर्वी चालू बाजारभाव व हमीभाव तपासा.\n` +
+              `🔗 थेट शेतमाल खरेदी-विक्री: https://cepnew.vercel.app`;
+      } else {
+        msg = `📈 *FARMCONNECT — LIVE APMC MANDI BENCHMARK RATES* 📈\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `🌾 *Wheat:* ₹2,350 / quintal (Khanna Mandi, Punjab)\n` +
+              `🌾 *Rice (Basmati):* ₹4,150 / quintal (Karnal Mandi, Haryana)\n` +
+              `🧅 *Onion:* ₹2,480 / quintal (Lasalgaon Mandi, Maharashtra)\n` +
+              `⚪ *Cotton:* ₹7,100 / quintal (Rajkot Mandi, Gujarat)\n` +
+              `🌱 *Soybean:* ₹4,820 / quintal (Indore Mandi, MP)\n` +
+              `🍅 *Tomato:* ₹1,850 / quintal (Kolar Mandi, Karnataka)\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n` +
+              `💡 *Market Advisory:* Check real-time APMC arrivals & MSP before dispatching produce.\n` +
+              `🔗 Trade Direct & Check Rates: https://cepnew.vercel.app`;
+      }
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, "_blank");
+    });
   }
 
   // Order Placement Modal Handling
