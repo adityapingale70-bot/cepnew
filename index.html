@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- 🗺️ Leaflet Map Engine for Farm Land GPS Pinning -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <!-- ========================================== -->
   <!-- 🎨 ALL FRONTEND CSS IN ONE PLACE           -->
@@ -1585,6 +1588,231 @@
     @media (max-width: 1024px) {
       .crop-rec-container { grid-template-columns: 1fr; }
     }
+
+    /* ========================================== */
+    /* 🛰️ GPS LOCATION & FARM MAP PICKER STYLES   */
+    /* ========================================== */
+    .gps-location-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #a7f3d0;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+      transition: all 0.2s ease;
+    }
+    .gps-location-card:hover {
+      border-color: #6ee7b7;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
+    }
+    .gps-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .gps-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1 1 260px;
+    }
+    .gps-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .gps-card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #065f46;
+      margin: 0 0 2px 0;
+    }
+    .gps-card-desc {
+      font-size: 0.8rem;
+      color: #047857;
+      margin: 0;
+      line-height: 1.35;
+    }
+    .gps-actions-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-gps-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #15803d;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(21, 128, 61, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-gps-trigger:hover {
+      background: #166534;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(21, 128, 61, 0.35);
+    }
+    .btn-gps-trigger:active {
+      transform: translateY(0);
+    }
+    .btn-gps-trigger.loading {
+      background: #059669;
+      cursor: wait;
+      opacity: 0.85;
+    }
+    .btn-map-picker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      color: #0f766e;
+      border: 1.5px solid #99f6e4;
+      border-radius: var(--radius-sm);
+      padding: 9px 15px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(15, 118, 110, 0.08);
+      transition: all 0.2s ease;
+    }
+    .btn-map-picker:hover {
+      background: #f0fdfa;
+      border-color: #5eead4;
+      transform: translateY(-1px);
+    }
+    .gps-status-bar {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #065f46;
+      flex-wrap: wrap;
+    }
+    .gps-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+      animation: pulseDot 1.8s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+    .gps-coords-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #a7f3d0;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #047857;
+      font-weight: 600;
+      margin-left: auto;
+    }
+    .input-pulse-highlight {
+      animation: gpsPulseHighlight 2.4s ease-out;
+    }
+    @keyframes gpsPulseHighlight {
+      0% {
+        background-color: #bbf7d0 !important;
+        border-color: #16a34a !important;
+        box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.35) !important;
+      }
+      50% {
+        background-color: #dcfce7 !important;
+        border-color: #22c55e !important;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+      }
+      100% {
+        background-color: #ffffff;
+        border-color: var(--border-color);
+        box-shadow: none;
+      }
+    }
+    /* Map Modal Specific */
+    .modal-map-card {
+      max-width: 760px;
+      width: 95%;
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    }
+    .map-modal-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .map-info-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      align-items: center;
+    }
+    .map-coord-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1 1 110px;
+    }
+    .map-coord-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.5px;
+    }
+    .map-coord-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1e293b;
+      font-family: monospace;
+    }
+    .map-coord-val.address-val {
+      font-family: inherit;
+      color: #15803d;
+      font-weight: 700;
+    }
+    .map-helper-tip {
+      font-size: 0.78rem;
+      color: #475569;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .farm-leaflet-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -1828,15 +2056,44 @@
               <input type="text" name="phone" value="+91 98765 43210" required>
             </label>
           </div>
+
+          <!-- 🛰️ GPS Location Auto-Detection & Interactive Map Bar -->
+          <div class="gps-location-card" id="gpsLocationCard">
+            <div class="gps-card-header">
+              <div class="gps-title-wrap">
+                <span class="gps-icon-badge">🛰️</span>
+                <div>
+                  <h4 class="gps-card-title" data-i18n="gpsCardTitle">Farm GPS Location & Map Auto-Detector</h4>
+                  <p class="gps-card-desc" data-i18n="gpsCardSub">Auto-fetch GPS coordinates via satellite or pin your farm on the interactive map to fill State, District & Village.</p>
+                </div>
+              </div>
+              <div class="gps-actions-wrap">
+                <button type="button" class="btn btn-gps-trigger" id="btnAutoFetchGPS">
+                  <span class="gps-btn-icon">📍</span>
+                  <span data-i18n="btnAutoGPS">Auto-Fetch GPS Location</span>
+                </button>
+                <button type="button" class="btn btn-map-picker" id="btnOpenMapModal">
+                  <span class="gps-btn-icon">🗺️</span>
+                  <span data-i18n="btnPinMap">Pick / Pin on Map</span>
+                </button>
+              </div>
+            </div>
+            <div class="gps-status-bar" id="gpsStatusBar" style="display:none;">
+              <span class="gps-status-dot"></span>
+              <span id="gpsStatusText">🛰️ Acquiring satellite GPS fix...</span>
+              <span id="gpsCoordsText" class="gps-coords-badge"></span>
+            </div>
+          </div>
+
           <div class="form-row">
             <label>State
-              <input type="text" name="state" value="Maharashtra" required>
+              <input type="text" name="state" id="farmerStateInput" value="Maharashtra" required>
             </label>
             <label>District
-              <input type="text" name="district" value="Nashik" required>
+              <input type="text" name="district" id="farmerDistrictInput" value="Nashik" required>
             </label>
             <label>Village
-              <input type="text" name="village" value="Niphad" required>
+              <input type="text" name="village" id="farmerVillageInput" value="Niphad" required>
             </label>
           </div>
           <div class="form-row">
@@ -2631,7 +2888,7 @@
         <div>
           <span class="weather-condition-label">Clear Sky</span>
           <h2 class="weather-temp-huge">29°C</h2>
-          <small>Nashik / Central Agro-Climatic Zone</small>
+          <small id="weatherZoneDisplay">Nashik / Central Agro-Climatic Zone</small>
         </div>
         <div class="weather-details-grid">
           <div>💧 <b>Humidity:</b> 58%</div>
@@ -3631,6 +3888,52 @@
   </div>
 </div>
 
+<!-- Interactive Farm Land GPS Map Modal -->
+<div class="modal-overlay" id="farmMapModal" style="display:none">
+  <div class="modal-card modal-map-card">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.4rem;">🗺️</span>
+        <div>
+          <h3 style="margin:0; font-size:1.05rem;" data-i18n="mapModalTitle">Farm Land Location Picker</h3>
+          <p style="margin:0; font-size:0.78rem; color:var(--text-muted);" data-i18n="mapModalSub">Tap anywhere or drag the green marker 📍 directly onto your farm / field</p>
+        </div>
+      </div>
+      <button type="button" class="btn-close-modal" id="btnCloseMapModal">✕</button>
+    </div>
+    
+    <div class="map-modal-body">
+      <!-- Live Map Container -->
+      <div id="farmMapContainer" style="width:100%; height:380px; border-radius:8px; border:1px solid #cbd5e1;"></div>
+      
+      <!-- Coordinate & Reverse Geocode Info Strip -->
+      <div class="map-info-strip">
+        <div class="map-coord-item">
+          <span class="map-coord-label">Latitude:</span>
+          <span id="mapSelectedLat" class="map-coord-val">19.9975° N</span>
+        </div>
+        <div class="map-coord-item">
+          <span class="map-coord-label">Longitude:</span>
+          <span id="mapSelectedLon" class="map-coord-val">73.7898° E</span>
+        </div>
+        <div class="map-coord-item" style="flex: 2 1 200px;">
+          <span class="map-coord-label">Detected Place:</span>
+          <span id="mapSelectedAddress" class="map-coord-val address-val">Niphad, Nashik, Maharashtra</span>
+        </div>
+      </div>
+      
+      <div class="map-helper-tip">
+        <span>💡 <b>Farmer Tip:</b> Zoom in to see field boundaries, roads, and village landmarks. Once placed, tap "Confirm & Use This Farm Location".</span>
+      </div>
+    </div>
+    
+    <div class="modal-footer" style="padding:14px 20px; background:#f8fafc; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:10px;">
+      <button type="button" class="btn btn-secondary" id="btnCancelMapModal">Cancel</button>
+      <button type="button" class="btn btn-primary" id="btnConfirmMapLocation" data-i18n="mapConfirmBtn">✅ Confirm & Use This Farm Location</button>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="site-footer">
   <div class="footer-inner">
@@ -3704,7 +4007,14 @@ const TRANSLATIONS = {
     tabCropRec: "🌱 AI Crop Profit Engine",
     cropRecTitle: "🌱 AI Crop Recommendation Engine (Best Crop for Profit)",
     cropRecDesc: "The AI evaluates your soil type, available water capacity, and district to predict the Top 3 most profitable crops to sow this season, considering soil compatibility and historical APMC Mandi market prices to help you shift away from low-margin monoculture.",
-    predictCropsBtn: "🚀 Predict Top 3 Profitable Crops"
+    predictCropsBtn: "🚀 Predict Top 3 Profitable Crops",
+    gpsCardTitle: "Farm GPS Location & Map Auto-Detector",
+    gpsCardSub: "Auto-fetch GPS coordinates via satellite or pin your farm on the interactive map to fill State, District & Village.",
+    btnAutoGPS: "Auto-Fetch GPS Location",
+    btnPinMap: "Pick / Pin on Map",
+    mapModalTitle: "Farm Land Location Picker",
+    mapModalSub: "Tap anywhere or drag the green marker 📍 directly onto your farm / field",
+    mapConfirmBtn: "✅ Confirm & Use This Farm Location"
   },
   hi: {
     platformTagline: "५-इन-१ स्मार्ट कृषि डिजिटल मंच",
@@ -3749,7 +4059,14 @@ const TRANSLATIONS = {
     tabCropRec: "🌱 फसल लाभ अनुशंसा (Profit AI)",
     cropRecTitle: "🌱 एआई फसल चयन व सर्वाधिक लाभ गणक",
     cropRecDesc: "अपनी मिट्टी का प्रकार, सिंचाई क्षमता और जिला दर्ज करें और एआई द्वारा इस मौसम में सबसे ज्यादा मुनाफा देने वाली टॉप ३ फसलों की सिफारिश पाएं, जिससे परंपरागत कम मुनाफे वाली खेती से मुक्ति मिले।",
-    predictCropsBtn: "🚀 टॉप ३ नफेदार फसलों की गणना करें"
+    predictCropsBtn: "🚀 टॉप ३ नफेदार फसलों की गणना करें",
+    gpsCardTitle: "खेत जीपीएस लोकेशन व मानचित्र ऑटो-डिटेक्टर",
+    gpsCardSub: "उपग्रह जीपीएस से स्थान प्राप्त करें या नक्शे पर अपने खेत को पिन करके राज्य, जिला और गांव भरें।",
+    btnAutoGPS: "जीपीएस से स्थान प्राप्त करें",
+    btnPinMap: "नक्शे पर खेत चुनें / पिन करें",
+    mapModalTitle: "खेत जमीन लोकेशन चयनकर्ता",
+    mapModalSub: "नक्शे पर कहीं भी टैप करें या हरे पिन 📍 को सीधे अपने खेत पर रखें",
+    mapConfirmBtn: "✅ पुष्टि करें और इस स्थान का उपयोग करें"
   },
   mr: {
     platformTagline: "५-इन-१ स्मार्ट कृषी डिजिटल मंच",
@@ -3794,7 +4111,14 @@ const TRANSLATIONS = {
     tabCropRec: "🌱 पीक नफा शिफारस (Profit AI)",
     cropRecTitle: "🌱 एआय पीक निवड व नफा सल्लागार",
     cropRecDesc: "तुमचा मातीचा प्रकार, पाण्याची उपलब्धता आणि जिल्हा निवडा आणि एआय द्वारे या हंगामात सर्वाधिक नफा देणाऱ्या पहिल्या ३ पिकांची शिफारस मिळवा, जेणेकरून पारंपरिक कमी फायद्याच्या शेतीतून बाहेर पडता येईल.",
-    predictCropsBtn: "🚀 सर्वाधिक नफा देणारी ३ पिके शोधा"
+    predictCropsBtn: "🚀 सर्वाधिक नफा देणारी ३ पिके शोधा",
+    gpsCardTitle: "शेत जीपीएस लोकेशन व नकाशा ऑटो-डिटेक्टर",
+    gpsCardSub: "उपग्रह जीपीएस द्वारे लोकेशन मिळवा किंवा परस्पर नकाशावर शेत निवडून राज्य, जिल्हा व गाव भरा.",
+    btnAutoGPS: "जीपीएस द्वारे लोकेशन मिळवा",
+    btnPinMap: "नकाशावर शेत निवडा / पिन करा",
+    mapModalTitle: "शेतजमीन लोकेशन निवड नकाशा",
+    mapModalSub: "नकाशावर कुठेही टॅप करा किंवा हिरवा मार्कर 📍 थेट आपल्या शेतावर सरकवा",
+    mapConfirmBtn: "✅ निश्चित करा आणि हे स्थान वापरा"
   }
 };
 
@@ -3879,6 +4203,351 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // MODULE 1: FARMER DASHBOARD SCRIPT
   // ==========================================
+
+  // ==========================================
+  // 🛰️ GPS & MAP REVERSE GEOCODING ENGINE
+  // ==========================================
+  const AGRI_DISTRICT_CENTROIDS = [
+    { district: "Nashik", state: "Maharashtra", lat: 19.9975, lon: 73.7898, defaultVillage: "Niphad" },
+    { district: "Pune", state: "Maharashtra", lat: 18.5204, lon: 73.8567, defaultVillage: "Baramati" },
+    { district: "Ahmednagar", state: "Maharashtra", lat: 19.0952, lon: 74.7496, defaultVillage: "Rahuri" },
+    { district: "Solapur", state: "Maharashtra", lat: 17.6599, lon: 75.9064, defaultVillage: "Pandharpur" },
+    { district: "Kolhapur", state: "Maharashtra", lat: 16.7050, lon: 74.2433, defaultVillage: "Shirol" },
+    { district: "Satara", state: "Maharashtra", lat: 17.6805, lon: 73.9997, defaultVillage: "Karad" },
+    { district: "Sangli", state: "Maharashtra", lat: 16.8524, lon: 74.5815, defaultVillage: "Tasgaon" },
+    { district: "Jalgaon", state: "Maharashtra", lat: 21.0077, lon: 75.5626, defaultVillage: "Raver" },
+    { district: "Dhule", state: "Maharashtra", lat: 20.9042, lon: 74.7749, defaultVillage: "Shirpur" },
+    { district: "Nandurbar", state: "Maharashtra", lat: 21.3697, lon: 74.2393, defaultVillage: "Shahada" },
+    { district: "Chhatrapati Sambhajinagar", state: "Maharashtra", lat: 19.8762, lon: 75.3433, defaultVillage: "Paithan" },
+    { district: "Jalna", state: "Maharashtra", lat: 19.8410, lon: 75.8864, defaultVillage: "Ambad" },
+    { district: "Beed", state: "Maharashtra", lat: 18.9891, lon: 75.7601, defaultVillage: "Majalgaon" },
+    { district: "Latur", state: "Maharashtra", lat: 18.4088, lon: 76.5604, defaultVillage: "Ausa" },
+    { district: "Dharashiv", state: "Maharashtra", lat: 18.1861, lon: 76.0419, defaultVillage: "Tuljapur" },
+    { district: "Nanded", state: "Maharashtra", lat: 19.1383, lon: 77.3210, defaultVillage: "Mukhed" },
+    { district: "Parbhani", state: "Maharashtra", lat: 19.2644, lon: 76.7767, defaultVillage: "Gangakhed" },
+    { district: "Hingoli", state: "Maharashtra", lat: 19.7196, lon: 77.1472, defaultVillage: "Basmath" },
+    { district: "Amravati", state: "Maharashtra", lat: 20.9320, lon: 77.7523, defaultVillage: "Achalpur" },
+    { district: "Akola", state: "Maharashtra", lat: 20.7002, lon: 77.0082, defaultVillage: "Murtizapur" },
+    { district: "Yavatmal", state: "Maharashtra", lat: 20.3888, lon: 78.1204, defaultVillage: "Pusad" },
+    { district: "Buldhana", state: "Maharashtra", lat: 20.5292, lon: 76.1843, defaultVillage: "Khamgaon" },
+    { district: "Washim", state: "Maharashtra", lat: 20.1095, lon: 77.1352, defaultVillage: "Risod" },
+    { district: "Nagpur", state: "Maharashtra", lat: 21.1458, lon: 79.0882, defaultVillage: "Katol" },
+    { district: "Wardha", state: "Maharashtra", lat: 20.7453, lon: 78.6022, defaultVillage: "Hinganghat" },
+    { district: "Bhandara", state: "Maharashtra", lat: 21.1714, lon: 79.6545, defaultVillage: "Tumsar" },
+    { district: "Gondia", state: "Maharashtra", lat: 21.4554, lon: 80.1961, defaultVillage: "Tirora" },
+    { district: "Chandrapur", state: "Maharashtra", lat: 19.9615, lon: 79.2961, defaultVillage: "Warora" },
+    { district: "Gadchiroli", state: "Maharashtra", lat: 20.1809, lon: 80.0035, defaultVillage: "Armori" },
+    { district: "Thane", state: "Maharashtra", lat: 19.2183, lon: 72.9781, defaultVillage: "Kalyan" },
+    { district: "Palghar", state: "Maharashtra", lat: 19.6967, lon: 72.7699, defaultVillage: "Dahanu" },
+    { district: "Raigad", state: "Maharashtra", lat: 18.5158, lon: 73.1822, defaultVillage: "Alibag" },
+    { district: "Ratnagiri", state: "Maharashtra", lat: 16.9902, lon: 73.3120, defaultVillage: "Chiplun" },
+    { district: "Sindhudurg", state: "Maharashtra", lat: 16.1218, lon: 73.6934, defaultVillage: "Kudal" },
+    { district: "Indore", state: "Madhya Pradesh", lat: 22.7196, lon: 75.8577, defaultVillage: "Sanwer" },
+    { district: "Bhopal", state: "Madhya Pradesh", lat: 23.2599, lon: 77.4126, defaultVillage: "Berasia" },
+    { district: "Surat", state: "Gujarat", lat: 21.1702, lon: 72.8311, defaultVillage: "Bardoli" },
+    { district: "Rajkot", state: "Gujarat", lat: 22.3039, lon: 70.8022, defaultVillage: "Gondal" },
+    { district: "Karnal", state: "Haryana", lat: 29.6857, lon: 76.9905, defaultVillage: "Nilokheri" },
+    { district: "Ludhiana", state: "Punjab", lat: 30.9010, lon: 75.8573, defaultVillage: "Jagraon" },
+    { district: "Belagavi", state: "Karnataka", lat: 15.8497, lon: 74.4977, defaultVillage: "Chikodi" }
+  ];
+
+  function findClosestAgriDistrict(lat, lon) {
+    let closest = AGRI_DISTRICT_CENTROIDS[0];
+    let minDist = Infinity;
+    for (const d of AGRI_DISTRICT_CENTROIDS) {
+      const R = 6371; // km
+      const dLat = (d.lat - lat) * Math.PI / 180;
+      const dLon = (d.lon - lon) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat * Math.PI / 180) * Math.cos(d.lat * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const dist = R * c;
+      if (dist < minDist) {
+        minDist = dist;
+        closest = d;
+      }
+    }
+    return { ...closest, distanceKm: Math.round(minDist) };
+  }
+
+  async function reverseGeocodeCoords(lat, lon) {
+    const fallback = findClosestAgriDistrict(lat, lon);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`, {
+        signal: controller.signal,
+        headers: { "Accept-Language": "en" }
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        const addr = data.address || {};
+        const state = addr.state || fallback.state;
+        const district = (addr.state_district || addr.county || addr.district || addr.city || fallback.district).replace(/\s+district$/i, '');
+        const village = addr.village || addr.suburb || addr.hamlet || addr.town || addr.neighbourhood || addr.city_district || fallback.defaultVillage;
+        return {
+          state,
+          district,
+          village,
+          formattedAddress: `${village}, ${district}, ${state}`
+        };
+      }
+    } catch (e) {
+      // Offline, timeout, or CORS restriction: seamlessly use high-precision centroid fallback
+    }
+    return {
+      state: fallback.state,
+      district: fallback.district,
+      village: fallback.defaultVillage,
+      formattedAddress: `${fallback.defaultVillage}, ${fallback.district}, ${fallback.state}`
+    };
+  }
+
+  function applyDetectedLocation(locData, source) {
+    const stInput = document.getElementById("farmerStateInput");
+    const dtInput = document.getElementById("farmerDistrictInput");
+    const vlInput = document.getElementById("farmerVillageInput");
+
+    if (stInput) stInput.value = locData.state;
+    if (dtInput) dtInput.value = locData.district;
+    if (vlInput) vlInput.value = locData.village;
+
+    // Glowing green pulse animation to highlight auto-populated fields
+    [stInput, dtInput, vlInput].forEach(inp => {
+      if (inp) {
+        inp.classList.remove("input-pulse-highlight");
+        void inp.offsetWidth; // Trigger reflow
+        inp.classList.add("input-pulse-highlight");
+        setTimeout(() => inp.classList.remove("input-pulse-highlight"), 2500);
+      }
+    });
+
+    // Persist into activeFarmer
+    const activeFarmer = getActiveFarmer();
+    activeFarmer.state = locData.state;
+    activeFarmer.district = locData.district;
+    activeFarmer.village = locData.village;
+    if (locData.lat) activeFarmer.gps_lat = locData.lat;
+    if (locData.lon) activeFarmer.gps_lon = locData.lon;
+    if (locData.accuracy) activeFarmer.gps_accuracy = locData.accuracy;
+    saveActiveFarmer(activeFarmer);
+
+    // Sync across Platform: Header, Weather Advisory, Crop Recommendation
+    const dLoc = document.getElementById("displayFarmerLoc");
+    if (dLoc) dLoc.textContent = `${locData.village}, ${locData.district}`;
+
+    const wZone = document.getElementById("weatherZoneDisplay");
+    if (wZone) wZone.textContent = `${locData.district} / Agro-Climatic Zone`;
+
+    const recDist = document.getElementById("recDistrict");
+    if (recDist) recDist.value = locData.district;
+
+    // Update GPS status bar
+    const statusBar = document.getElementById("gpsStatusBar");
+    const statusText = document.getElementById("gpsStatusText");
+    const coordsText = document.getElementById("gpsCoordsText");
+    if (statusBar) statusBar.style.display = "flex";
+    if (statusText) statusText.innerHTML = `✅ <b>Location Locked:</b> ${locData.village}, ${locData.district} (${locData.state})`;
+    if (coordsText && locData.lat && locData.lon) {
+      coordsText.textContent = `${Number(locData.lat).toFixed(4)}°N, ${Number(locData.lon).toFixed(4)}°E (±${Math.round(locData.accuracy || 12)}m)`;
+    }
+
+    showToast(`📍 Location set: ${locData.village}, ${locData.district} (${locData.state})`, "success");
+  }
+
+  // --- Geolocation Auto-Fetch Handler ---
+  const btnAutoFetchGPS = document.getElementById("btnAutoFetchGPS");
+  if (btnAutoFetchGPS) {
+    btnAutoFetchGPS.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        showToast("Geolocation is not supported by your browser. Please pick your farm on the map.", "error");
+        openFarmMapModal();
+        return;
+      }
+
+      const origText = btnAutoFetchGPS.innerHTML;
+      btnAutoFetchGPS.disabled = true;
+      btnAutoFetchGPS.classList.add("loading");
+      btnAutoFetchGPS.innerHTML = `<span style="display:inline-block; animation:spin 1s linear infinite;">🛰️</span> <span>Detecting GPS...</span>`;
+
+      const statusBar = document.getElementById("gpsStatusBar");
+      const statusText = document.getElementById("gpsStatusText");
+      if (statusBar) statusBar.style.display = "flex";
+      if (statusText) statusText.innerHTML = `🛰️ Connecting to satellites & acquiring precision fix...`;
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          if (statusText) statusText.innerHTML = `📍 Coordinates acquired. Resolving village & district...`;
+          const geoRes = await reverseGeocodeCoords(lat, lon);
+          applyDetectedLocation({
+            state: geoRes.state,
+            district: geoRes.district,
+            village: geoRes.village,
+            lat,
+            lon,
+            accuracy
+          }, "gps");
+
+          btnAutoFetchGPS.disabled = false;
+          btnAutoFetchGPS.classList.remove("loading");
+          btnAutoFetchGPS.innerHTML = origText;
+        },
+        (error) => {
+          btnAutoFetchGPS.disabled = false;
+          btnAutoFetchGPS.classList.remove("loading");
+          btnAutoFetchGPS.innerHTML = origText;
+
+          let msg = "Could not fetch GPS automatically.";
+          if (error.code === 1) msg = "Location permission denied. Opening map so you can pin your farm directly!";
+          else if (error.code === 2) msg = "GPS signal unavailable. Opening map to pick location.";
+          else if (error.code === 3) msg = "GPS request timed out. Opening map to pick location.";
+
+          showToast(msg, "info");
+          openFarmMapModal();
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+      );
+    });
+  }
+
+  // --- Interactive Leaflet Farm Map Modal ---
+  let farmLeafletMap = null;
+  let farmMarker = null;
+  let tempSelectedMapLocation = {
+    lat: 19.9975,
+    lon: 73.7898,
+    state: "Maharashtra",
+    district: "Nashik",
+    village: "Niphad",
+    accuracy: 10
+  };
+
+  function initFarmMap(startLat, startLon) {
+    if (typeof L === "undefined") {
+      showToast("Leaflet map library is loading or offline.", "info");
+      return;
+    }
+
+    const lat = startLat || tempSelectedMapLocation.lat;
+    const lon = startLon || tempSelectedMapLocation.lon;
+
+    const mapContainer = document.getElementById("farmMapContainer");
+    if (!mapContainer) return;
+
+    if (!farmLeafletMap) {
+      farmLeafletMap = L.map('farmMapContainer').setView([lat, lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(farmLeafletMap);
+
+      const farmPinIcon = L.divIcon({
+        className: 'farm-leaflet-pin',
+        html: '<div style="background:#15803d; color:#ffffff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; border:2px solid #ffffff; box-shadow:0 3px 10px rgba(0,0,0,0.35); cursor:grab;">📍</div>',
+        iconSize: [36, 36],
+        iconAnchor: [18, 36]
+      });
+
+      farmMarker = L.marker([lat, lon], { draggable: true, icon: farmPinIcon }).addTo(farmLeafletMap);
+
+      farmMarker.on('dragend', async (e) => {
+        const pos = e.target.getLatLng();
+        await onMapLocationChanged(pos.lat, pos.lng);
+      });
+
+      farmLeafletMap.on('click', async (e) => {
+        farmMarker.setLatLng(e.latlng);
+        await onMapLocationChanged(e.latlng.lat, e.latlng.lng);
+      });
+    } else {
+      farmLeafletMap.setView([lat, lon], 13);
+      if (farmMarker) farmMarker.setLatLng([lat, lon]);
+    }
+
+    onMapLocationChanged(lat, lon);
+  }
+
+  async function onMapLocationChanged(lat, lon) {
+    const latSpan = document.getElementById("mapSelectedLat");
+    const lonSpan = document.getElementById("mapSelectedLon");
+    const addrSpan = document.getElementById("mapSelectedAddress");
+
+    if (latSpan) latSpan.textContent = `${Number(lat).toFixed(5)}° N`;
+    if (lonSpan) lonSpan.textContent = `${Number(lon).toFixed(5)}° E`;
+    if (addrSpan) addrSpan.textContent = "Resolving agro-location...";
+
+    const res = await reverseGeocodeCoords(lat, lon);
+    tempSelectedMapLocation = {
+      lat,
+      lon,
+      state: res.state,
+      district: res.district,
+      village: res.village,
+      accuracy: 10
+    };
+
+    if (addrSpan) {
+      addrSpan.textContent = `${res.village}, ${res.district}, ${res.state}`;
+    }
+  }
+
+  function openFarmMapModal() {
+    const modal = document.getElementById("farmMapModal");
+    if (!modal) return;
+    modal.style.display = "flex";
+
+    const activeFarmer = getActiveFarmer();
+    let initLat = 19.9975;
+    let initLon = 73.7898;
+    if (activeFarmer && activeFarmer.gps_lat && activeFarmer.gps_lon) {
+      initLat = parseFloat(activeFarmer.gps_lat);
+      initLon = parseFloat(activeFarmer.gps_lon);
+    } else if (activeFarmer && activeFarmer.district) {
+      const match = AGRI_DISTRICT_CENTROIDS.find(d => d.district.toLowerCase() === activeFarmer.district.toLowerCase());
+      if (match) { initLat = match.lat; initLon = match.lon; }
+    }
+
+    setTimeout(() => {
+      initFarmMap(initLat, initLon);
+      if (farmLeafletMap) farmLeafletMap.invalidateSize();
+    }, 200);
+  }
+
+  function closeFarmMapModal() {
+    const modal = document.getElementById("farmMapModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  const btnOpenMap = document.getElementById("btnOpenMapModal");
+  if (btnOpenMap) btnOpenMap.addEventListener("click", openFarmMapModal);
+
+  const btnCloseMap = document.getElementById("btnCloseMapModal");
+  if (btnCloseMap) btnCloseMap.addEventListener("click", closeFarmMapModal);
+
+  const btnCancelMap = document.getElementById("btnCancelMapModal");
+  if (btnCancelMap) btnCancelMap.addEventListener("click", closeFarmMapModal);
+
+  const btnConfirmMap = document.getElementById("btnConfirmMapLocation");
+  if (btnConfirmMap) {
+    btnConfirmMap.addEventListener("click", () => {
+      applyDetectedLocation(tempSelectedMapLocation, "map");
+      closeFarmMapModal();
+    });
+  }
+
+  const farmMapModalOverlay = document.getElementById("farmMapModal");
+  if (farmMapModalOverlay) {
+    farmMapModalOverlay.addEventListener("click", (e) => {
+      if (e.target === farmMapModalOverlay) closeFarmMapModal();
+    });
+  }
+
   const profileForm = document.getElementById("profileForm");
   const saveBtn = document.getElementById("saveProfileBtn");
 
@@ -5484,6 +6153,23 @@ document.addEventListener("DOMContentLoaded", () => {
         if (pf.elements["farm_size_acres"]) pf.elements["farm_size_acres"].value = farmer.farm_size_acres || 6.5;
         if (pf.elements["soil_type"]) pf.elements["soil_type"].value = farmer.soil_type || "Black Clay Soil";
         if (pf.elements["irrigation_source"]) pf.elements["irrigation_source"].value = farmer.irrigation_source || "Drip Irrigation + Borewell";
+      }
+
+      if (farmer.gps_lat && farmer.gps_lon) {
+        const statusBar = document.getElementById("gpsStatusBar");
+        const statusText = document.getElementById("gpsStatusText");
+        const coordsText = document.getElementById("gpsCoordsText");
+        if (statusBar) statusBar.style.display = "flex";
+        if (statusText) statusText.innerHTML = `🛰️ <b>Saved Farm GPS:</b> ${farmer.village || 'Niphad'}, ${farmer.district || 'Nashik'}`;
+        if (coordsText) coordsText.textContent = `${Number(farmer.gps_lat).toFixed(4)}°N, ${Number(farmer.gps_lon).toFixed(4)}°E`;
+      }
+      const wZone = document.getElementById("weatherZoneDisplay");
+      if (wZone && farmer.district) {
+        wZone.textContent = `${farmer.district} / Agro-Climatic Zone`;
+      }
+      const recDist = document.getElementById("recDistrict");
+      if (recDist && farmer.district) {
+        recDist.value = farmer.district;
       }
     } else {
       if (authBtn) authBtn.style.display = "inline-flex";
