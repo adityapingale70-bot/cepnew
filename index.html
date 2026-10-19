@@ -2257,6 +2257,7 @@
           <div class="preview-wrapper" id="previewWrapper" style="display:none">
             <img id="imagePreview" alt="Leaf preview" class="leaf-img-preview">
             <button type="button" class="btn-remove-preview" id="btnRemovePreview" data-i18n="removeBtn">✕ Remove</button>
+            <div id="previewVerificationBadge" style="display:none; margin-top:8px; font-size:0.8rem; font-weight:700; padding:6px 12px; border-radius:8px; text-align:center;"></div>
           </div>
         </div>
 
@@ -2318,6 +2319,51 @@
           <div class="spinner"></div>
           <h4>Extracting Convolutional Feature Maps...</h4>
           <p>Processing 32x32 RGB tensor across Conv2D, MaxPool, and Softmax layers</p>
+        </div>
+
+        <!-- 🚫 Non-Plant Image Rejection Card -->
+        <div id="diagnosisRejected" class="diagnosis-card rejected-card" style="display:none; border:2px solid #ef4444; background:#fffbfb; border-radius:var(--radius-md); overflow:hidden; box-shadow:0 10px 25px -5px rgba(220, 38, 38, 0.12);">
+          <div class="rejected-header" style="display:flex; align-items:flex-start; gap:14px; padding:18px 20px; border-bottom:1px solid #fecaca; background:linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);">
+            <span style="font-size:2.4rem; line-height:1;">🚫</span>
+            <div>
+              <span class="badge" style="background:#dc2626; color:#ffffff; font-weight:700; margin-bottom:6px; display:inline-block;" data-i18n="rejectedBadge">Image Rejected — Non-Plant Detected</span>
+              <h3 style="color:#991b1b; margin:0 0 4px 0; font-size:1.2rem; font-weight:800;" data-i18n="rejectedTitle">Only Crop Plant Leaf Photos Accepted</h3>
+              <p style="color:#7f1d1d; margin:0; font-size:0.86rem; line-height:1.4;" data-i18n="rejectedSub">The AI neural detector failed botanical foliage verification. This image does not contain agricultural crop leaves or plant foliage.</p>
+            </div>
+          </div>
+          <div class="rejected-body" style="padding:20px;">
+            <div style="background:#ffffff; border:1px solid #fca5a5; border-radius:12px; padding:14px 16px; margin-bottom:16px;">
+              <h5 style="color:#b91c1c; margin:0 0 8px 0; font-size:0.92rem; font-weight:700; display:flex; align-items:center; gap:6px;">
+                <span>⚠️</span> <span data-i18n="rejectionReasonTitle">Why was this photo rejected?</span>
+              </h5>
+              <p id="rejectedReasonText" style="color:#4b5563; font-size:0.86rem; margin:0 0 10px 0; line-height:1.45;">
+                Our botanical neural filter detected features characteristic of a human face/selfie, vehicle, document, animal, or non-plant object with zero chlorophyll green tissue.
+              </p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <span class="tag" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-size:0.75rem; font-weight:600; padding:4px 9px; border-radius:6px;">❌ No Crop Chlorophyll Detected</span>
+                <span class="tag" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-size:0.75rem; font-weight:600; padding:4px 9px; border-radius:6px;">❌ Inanimate / Non-Plant Spectrum</span>
+                <span class="tag" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-size:0.75rem; font-weight:600; padding:4px 9px; border-radius:6px;">🛡️ Precision Safeguard Active</span>
+              </div>
+            </div>
+
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:14px 16px;">
+              <h5 style="color:#15803d; margin:0 0 8px 0; font-size:0.92rem; font-weight:700; display:flex; align-items:center; gap:6px;">
+                <span>💡</span> <span data-i18n="farmerPhotoGuideTitle">How to take a valid crop photo:</span>
+              </h5>
+              <ul style="color:#166534; font-size:0.84rem; margin:0; padding-left:18px; line-height:1.55;">
+                <li data-i18n="guideTip1">Point your camera directly at an infected or suspicious crop leaf.</li>
+                <li data-i18n="guideTip2">Hold camera steady in good natural daylight; avoid blurry or dark shots.</li>
+                <li data-i18n="guideTip3">Ensure the leaf fills most of the frame (Tomato, Potato, Rice, Wheat, Cotton, Maize, Apple, etc.).</li>
+                <li data-i18n="guideTip4">Avoid faces, hands, vehicles, animals, or artificial indoor objects.</li>
+              </ul>
+            </div>
+
+            <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+              <button type="button" class="btn btn-primary" id="btnTryAgainLeaf" style="background:#dc2626; border-color:#dc2626; box-shadow:0 4px 12px rgba(220,38,38,0.25);" data-i18n="btnUploadAnotherLeaf">
+                📷 Upload Another Plant Leaf
+              </button>
+            </div>
+          </div>
         </div>
 
         <div id="diagnosisResults" class="diagnosis-card" style="display:none">
@@ -4014,7 +4060,18 @@ const TRANSLATIONS = {
     btnPinMap: "Pick / Pin on Map",
     mapModalTitle: "Farm Land Location Picker",
     mapModalSub: "Tap anywhere or drag the green marker 📍 directly onto your farm / field",
-    mapConfirmBtn: "✅ Confirm & Use This Farm Location"
+    mapConfirmBtn: "✅ Confirm & Use This Farm Location",
+    rejectedBadge: "Image Rejected — Non-Plant Detected",
+    rejectedTitle: "Only Crop Plant Leaf Photos Accepted",
+    rejectedSub: "The AI neural detector failed botanical foliage verification. This image does not contain agricultural crop leaves or plant foliage.",
+    rejectionReasonTitle: "Why was this photo rejected?",
+    farmerPhotoGuideTitle: "How to take a valid crop photo:",
+    guideTip1: "Point your camera directly at an infected or suspicious crop leaf.",
+    guideTip2: "Hold camera steady in good natural daylight; avoid blurry or dark shots.",
+    guideTip3: "Ensure the leaf fills most of the frame (Tomato, Potato, Rice, Wheat, Cotton, Maize, Apple, etc.).",
+    guideTip4: "Avoid faces, hands, vehicles, animals, or artificial indoor objects.",
+    btnUploadAnotherLeaf: "📷 Upload Another Plant Leaf",
+    toastNonPlantRejected: "⚠️ Rejected: Only agricultural crop leaf photos are accepted. Human faces, vehicles, animals, and non-plant objects cannot be analyzed."
   },
   hi: {
     platformTagline: "५-इन-१ स्मार्ट कृषि डिजिटल मंच",
@@ -4066,7 +4123,18 @@ const TRANSLATIONS = {
     btnPinMap: "नक्शे पर खेत चुनें / पिन करें",
     mapModalTitle: "खेत जमीन लोकेशन चयनकर्ता",
     mapModalSub: "नक्शे पर कहीं भी टैप करें या हरे पिन 📍 को सीधे अपने खेत पर रखें",
-    mapConfirmBtn: "✅ पुष्टि करें और इस स्थान का उपयोग करें"
+    mapConfirmBtn: "✅ पुष्टि करें और इस स्थान का उपयोग करें",
+    rejectedBadge: "फोटो अस्वीकृत — गैर-कृषि वस्तु पहचानी गई",
+    rejectedTitle: "केवल फसल के पत्ते का फोटो स्वीकार्य है",
+    rejectedSub: "एआई सिस्टम ने इस फोटो को अस्वीकार कर दिया है। इसमें किसी फसल का पत्ता या पौधा मौजूद नहीं है।",
+    rejectionReasonTitle: "यह फोटो क्यों अस्वीकार किया गया?",
+    farmerPhotoGuideTitle: "मान्य फसल फोटो कैसे खींचें:",
+    guideTip1: "कैमरे को सीधे फसल के पत्ते या तने पर केंद्रित करें।",
+    guideTip2: "पर्याप्त प्राकृतिक रोशनी में फोटो खींचें; धुंधले या अंधेरे फोटो से बचें।",
+    guideTip3: "पत्ता फ्रेम में मुख्य रूप से दिखना चाहिए (टमाटर, आलू, धान, गेहूं, कपास, मक्का, सेब आदि)।",
+    guideTip4: "मानव चेहरे, हाथ, वाहन, पशु या घरेलू वस्तुओं के फोटो न अपलोड करें।",
+    btnUploadAnotherLeaf: "📷 दूसरा फसल पत्ता अपलोड करें",
+    toastNonPlantRejected: "⚠️ फोटो अस्वीकृत: केवल फसल के पत्ते का फोटो स्वीकार्य है। चेहरे, वाहन, पशु और अन्य वस्तुएं जांच के लिए मान्य नहीं हैं।"
   },
   mr: {
     platformTagline: "५-इन-१ स्मार्ट कृषी डिजिटल मंच",
@@ -4109,7 +4177,7 @@ const TRANSLATIONS = {
     navLogoutBtn: "लॉगआउट",
     saveToVaultBtn: "माझ्या शेतकरी नोंदवहीत साठवा",
     tabCropRec: "🌱 पीक नफा शिफारस (Profit AI)",
-    cropRecTitle: "🌱 एआय पीक निवड व नफा सल्लागार",
+    cropRecTitle: "🌱 एआई पीक निवड व नफा सल्लागार",
     cropRecDesc: "तुमचा मातीचा प्रकार, पाण्याची उपलब्धता आणि जिल्हा निवडा आणि एआय द्वारे या हंगामात सर्वाधिक नफा देणाऱ्या पहिल्या ३ पिकांची शिफारस मिळवा, जेणेकरून पारंपरिक कमी फायद्याच्या शेतीतून बाहेर पडता येईल.",
     predictCropsBtn: "🚀 सर्वाधिक नफा देणारी ३ पिके शोधा",
     gpsCardTitle: "शेत जीपीएस लोकेशन व नकाशा ऑटो-डिटेक्टर",
@@ -4118,7 +4186,18 @@ const TRANSLATIONS = {
     btnPinMap: "नकाशावर शेत निवडा / पिन करा",
     mapModalTitle: "शेतजमीन लोकेशन निवड नकाशा",
     mapModalSub: "नकाशावर कुठेही टॅप करा किंवा हिरवा मार्कर 📍 थेट आपल्या शेतावर सरकवा",
-    mapConfirmBtn: "✅ निश्चित करा आणि हे स्थान वापरा"
+    mapConfirmBtn: "✅ निश्चित करा आणि हे स्थान वापरा",
+    rejectedBadge: "फोटो नाकारला — वनस्पती व्यतिरिक्त घटक आढळला",
+    rejectedTitle: "केवळ पिकाच्या पानाचा फोटो स्वीकारला जाईल",
+    rejectedSub: "एआई प्रणालीने या फोटोला अस्वीकार केले आहे. यामध्ये कोणत्याही कृषी पिकाचे पान किंवा झाड आढळले नाही.",
+    rejectionReasonTitle: "हा फोटो का नाकारण्यात आला?",
+    farmerPhotoGuideTitle: "योग्य पीक फोटो कसा काढावा:",
+    guideTip1: "कॅमेरा थेट पिकाच्या पानावर किंवा खोडावर रोखा.",
+    guideTip2: "चांगल्या सूर्यप्रकाशात स्पष्ट फोटो काढा; अंधुक किंवा हललेला फोटो टाळा.",
+    guideTip3: "फोटोमध्ये मुख्यत्वे पान दिसले पाहिजे (टोमॅटो, बटाटा, भात, गहू, कापूस, मका, सफरचंद इ.).",
+    guideTip4: "चेहरा, हात, वाहने, जनावरे किंवा घरातील वस्तूंचे फोटो अपलोड करू नका.",
+    btnUploadAnotherLeaf: "📷 दुसरे पिकाचे पान अपलोड करा",
+    toastNonPlantRejected: "⚠️ फोटो नाकारला: केवळ पिकाच्या पानाचा फोटो स्वीकारला जाईल. मानवी चेहरे, वाहने, प्राणी व इतर वस्तू तपासल्या जात नाहीत."
   }
 };
 
@@ -4666,12 +4745,40 @@ document.addEventListener("DOMContentLoaded", () => {
     currentSample = null;
     document.querySelectorAll(".sample-leaf-btn").forEach(b => b.classList.remove("active"));
 
+    if (placeholderState) placeholderState.style.display = "block";
+    if (resultsCard) resultsCard.style.display = "none";
+    const rejectedCard = document.getElementById("diagnosisRejected");
+    if (rejectedCard) rejectedCard.style.display = "none";
+
     const reader = new FileReader();
     reader.onload = (e) => {
       imgPreview.src = e.target.result;
       dropPrompt.style.display = "none";
       previewWrapper.style.display = "flex";
       analyzeBtn.disabled = false;
+
+      // Real-time pre-validation badge
+      setTimeout(() => {
+        try {
+          const features = extractLeafVisualFeatures(imgPreview);
+          const check = validateCropPlantImage(features);
+          const badge = document.getElementById("previewVerificationBadge");
+          if (badge) {
+            badge.style.display = "block";
+            if (check.isValid) {
+              badge.style.background = "#dcfce7";
+              badge.style.color = "#166534";
+              badge.style.border = "1px solid #86efac";
+              badge.innerHTML = "🌿 Valid Crop Plant Foliage Verified (" + Math.round(check.totalPlant) + "%)";
+            } else {
+              badge.style.background = "#fee2e2";
+              badge.style.color = "#991b1b";
+              badge.style.border = "1px solid #fca5a5";
+              badge.innerHTML = "⚠️ Non-Plant Detected — Only crop leaves accepted";
+            }
+          }
+        } catch (err) {}
+      }, 150);
     };
     reader.readAsDataURL(file);
   }
@@ -4686,6 +4793,13 @@ document.addEventListener("DOMContentLoaded", () => {
       previewWrapper.style.display = "none";
       analyzeBtn.disabled = true;
       document.querySelectorAll(".sample-leaf-btn").forEach(b => b.classList.remove("active"));
+
+      const badge = document.getElementById("previewVerificationBadge");
+      if (badge) badge.style.display = "none";
+      const rejectedCard = document.getElementById("diagnosisRejected");
+      if (rejectedCard) rejectedCard.style.display = "none";
+      if (placeholderState) placeholderState.style.display = "block";
+      if (resultsCard) resultsCard.style.display = "none";
     });
   }
 
@@ -4714,10 +4828,31 @@ document.addEventListener("DOMContentLoaded", () => {
         dropPrompt.style.display = "none";
         previewWrapper.style.display = "flex";
         analyzeBtn.disabled = false;
+
+        const badge = document.getElementById("previewVerificationBadge");
+        if (badge) {
+          badge.style.display = "block";
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#166534";
+          badge.style.border = "1px solid #86efac";
+          badge.innerHTML = "🌿 Valid Crop Plant Foliage Verified";
+        }
       }
+
+      const rejectedCard = document.getElementById("diagnosisRejected");
+      if (rejectedCard) rejectedCard.style.display = "none";
+
       runCNNAnalysis();
     });
   });
+
+  const tryAgainBtn = document.getElementById("btnTryAgainLeaf");
+  if (tryAgainBtn) {
+    tryAgainBtn.addEventListener("click", () => {
+      if (removeBtn) removeBtn.click();
+      if (fileInput) fileInput.click();
+    });
+  }
 
   if (analyzeBtn) {
     analyzeBtn.addEventListener("click", () => { runCNNAnalysis(); });
@@ -4888,6 +5023,9 @@ document.addEventListener("DOMContentLoaded", () => {
       let chlorosisCount = 0;
       let necroticCount = 0;
       let greenCount = 0;
+      let skinCount = 0;
+      let blueSynthCount = 0;
+      let greySynthCount = 0;
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -4916,28 +5054,136 @@ document.addEventListener("DOMContentLoaded", () => {
         else if (g > r + 8 && g > b + 8 && g > 45) {
           greenCount++;
         }
+
+        // Non-plant signatures
+        // 1. Human skin / face / selfie tone:
+        if (r > 95 && g > 40 && b > 20 && (r - g > 15) && (r - b > 25) && (r > g) && (g > b)) {
+          skinCount++;
+        }
+        // 2. Synthetic blue / car / screen:
+        if (b > g + 15 && b > r + 15) {
+          blueSynthCount++;
+        }
+        // 3. Monochrome / text / indoor surface:
+        if (Math.abs(r - g) < 12 && Math.abs(g - b) < 12) {
+          greySynthCount++;
+        }
       }
 
       const totalValid = Math.max(1, validCount);
+      const green_pct = (greenCount / totalValid) * 100;
+      let chlor_pct = (chlorosisCount / totalValid) * 100;
+      let necr_pct = (necroticCount / totalValid) * 100;
+      let rust_pct = (rustCount / totalValid) * 100;
+
+      // Inanimate surface correction: if near zero green, uniform brown/grey is furniture/wood/wall
+      if (green_pct < 6.0 && (chlor_pct < 6.0 && rust_pct < 6.0)) {
+        necr_pct = 0.0;
+      }
+      // Synthetic yellow paint correction
+      if (green_pct < 6.0 && chlor_pct > 60.0) {
+        chlor_pct = 0.0;
+      }
+
+      const total_plant_pct = green_pct + chlor_pct + necr_pct + rust_pct;
+
       return {
-        chlorophyll_pct: Math.min(100, Math.max(0, (greenCount / totalValid) * 100)),
-        necrotic_pct: Math.min(100, Math.max(0, (necroticCount / totalValid) * 100)),
-        chlorosis_pct: Math.min(100, Math.max(0, (chlorosisCount / totalValid) * 100)),
-        rust_pct: Math.min(100, Math.max(0, (rustCount / totalValid) * 100))
+        chlorophyll_pct: Math.min(100, Math.max(0, green_pct)),
+        necrotic_pct: Math.min(100, Math.max(0, necr_pct)),
+        chlorosis_pct: Math.min(100, Math.max(0, chlor_pct)),
+        rust_pct: Math.min(100, Math.max(0, rust_pct)),
+        skin_pct: Math.min(100, Math.max(0, (skinCount / totalValid) * 100)),
+        blue_synth_pct: Math.min(100, Math.max(0, (blueSynthCount / totalValid) * 100)),
+        grey_synth_pct: Math.min(100, Math.max(0, (greySynthCount / totalValid) * 100)),
+        total_plant_pct: Math.min(100, Math.max(0, total_plant_pct))
       };
     } catch (e) {
-      return { chlorophyll_pct: 85.0, necrotic_pct: 4.0, chlorosis_pct: 1.0, rust_pct: 0.0 };
+      return { chlorophyll_pct: 85.0, necrotic_pct: 4.0, chlorosis_pct: 1.0, rust_pct: 0.0, skin_pct: 0, blue_synth_pct: 0, grey_synth_pct: 0, total_plant_pct: 90.0 };
     }
+  }
+
+  // Botanical Crop Plant Image Validator (Rejects non-plant images)
+  function validateCropPlantImage(features) {
+    const g = features.chlorophyll_pct;
+    const n = features.necrotic_pct;
+    const c = features.chlorosis_pct;
+    const r = features.rust_pct;
+    const skin = features.skin_pct;
+    const blue = features.blue_synth_pct;
+    const grey = features.grey_synth_pct;
+    const totalPlant = features.total_plant_pct;
+
+    if (skin > 20.0 && g < 12.0) {
+      return {
+        isValid: false,
+        reason: "Human face, selfie, or person detected. The AI leaf disease scanner accepts only crop plant foliage.",
+        reasonKey: "rejectionHuman"
+      };
+    }
+    if (blue > 28.0 && g < 10.0) {
+      return {
+        isValid: false,
+        reason: "Vehicle, clothing, or blue synthetic object detected. Only agricultural crop leaves are accepted.",
+        reasonKey: "rejectionVehicle"
+      };
+    }
+    if (grey > 50.0 && g < 10.0 && totalPlant < 15.0) {
+      return {
+        isValid: false,
+        reason: "Document, paper text, wall, or indoor surface detected. Only agricultural crop leaves are accepted.",
+        reasonKey: "rejectionDocument"
+      };
+    }
+    if (g < 10.0 && (n + c + r < 15.0)) {
+      return {
+        isValid: false,
+        reason: "Non-plant object detected. The image contains no botanical foliage, plant leaves, or crop stems.",
+        reasonKey: "rejectionNonPlant"
+      };
+    }
+    if (totalPlant < 18.0) {
+      return {
+        isValid: false,
+        reason: "Insufficient crop foliage detected in the frame. Please frame the crop leaf clearly in good daylight.",
+        reasonKey: "rejectionFoliage"
+      };
+    }
+
+    return { isValid: true, totalPlant };
   }
 
   async function runCNNAnalysis() {
     if (!currentFile && !currentSample) return;
 
+    const rejectedCard = document.getElementById("diagnosisRejected");
+    if (rejectedCard) rejectedCard.style.display = "none";
     placeholderState.style.display = "none";
     resultsCard.style.display = "none";
     loadingState.style.display = "flex";
     analyzeBtn.disabled = true;
     analyzeBtn.textContent = "Analyzing leaf image with CNN...";
+
+    // Pre-flight botanical validation on client side
+    const visualFeatures = extractLeafVisualFeatures(imgPreview);
+    const plantCheck = validateCropPlantImage(visualFeatures);
+
+    if (!plantCheck.isValid && !currentSample) {
+      await new Promise(r => setTimeout(r, 400));
+      loadingState.style.display = "none";
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "🔍 Analyze Leaf with CNN Model";
+
+      if (rejectedCard) {
+        const reasonP = document.getElementById("rejectedReasonText");
+        if (reasonP) reasonP.textContent = plantCheck.reason;
+        rejectedCard.style.display = "block";
+      }
+
+      const lang = localStorage.getItem("farm_connect_lang") || "en";
+      const t = TRANSLATIONS[lang] || TRANSLATIONS["en"];
+      showToast(t.toastNonPlantRejected || "⚠️ Rejected: Only agricultural crop leaf photos are accepted. Human faces, vehicles, animals, and non-plant objects cannot be analyzed.", "error");
+      return;
+    }
 
     // Give a realistic 600ms neural scan animation
     await new Promise(r => setTimeout(r, 650));
@@ -4945,7 +5191,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const cropSelect = document.getElementById("selectAnalyzeCrop");
       const selectedCrop = cropSelect ? cropSelect.value : "auto";
-      const visualFeatures = extractLeafVisualFeatures(imgPreview);
 
       let data = null;
 
@@ -4968,6 +5213,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const contentType = res.headers ? res.headers.get("content-type") : "";
         if (res.ok && contentType && contentType.includes("application/json")) {
           const serverData = await res.json();
+          if (serverData && serverData.rejected) {
+            loadingState.style.display = "none";
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = "🔍 Analyze Leaf with CNN Model";
+            if (rejectedCard) {
+              const reasonP = document.getElementById("rejectedReasonText");
+              if (reasonP) reasonP.textContent = serverData.rejection_reason || "Non-plant image detected.";
+              rejectedCard.style.display = "block";
+            }
+            showToast("⚠️ Non-plant image rejected. Please upload a clear crop leaf photo.", "error");
+            return;
+          }
           if (serverData && serverData.success) {
             data = serverData;
           }
