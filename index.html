@@ -2279,12 +2279,21 @@
         </div>
 
         <div class="upload-dropzone" id="dropZone">
-          <input type="file" id="leafFileInput" accept="image/*" capture="environment" style="display:none">
+          <input type="file" id="leafFileInput" accept="image/*" style="display:none">
+          <input type="file" id="leafCameraInput" accept="image/*" capture="environment" style="display:none">
+          <input type="file" id="leafGalleryInput" accept="image/*" style="display:none">
           <div class="dropzone-content" id="dropzonePrompt">
-            <span class="upload-cloud-icon">📸</span>
+            <span class="upload-cloud-icon">🌿</span>
             <h4 data-i18n="dragDropText">Drag & Drop Leaf Photo Here</h4>
-            <p data-i18n="orBrowseText">or click to browse from your phone / computer</p>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('leafFileInput').click()" data-i18n="chooseFileBtn">📁 Choose File</button>
+            <p data-i18n="orBrowseText">or choose an option below on your phone / computer</p>
+            <div class="mobile-upload-btn-group" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px;">
+              <button type="button" class="btn btn-primary" id="btnTakeCameraPhoto" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-weight:700; border-radius:10px; font-size:0.92rem; box-shadow:0 3px 10px rgba(21,128,61,0.25); cursor:pointer;">
+                <span>📸</span> <span data-i18n="btnTakeCameraPhoto">📸 कॅमेऱ्याने फोटो काढा (Camera)</span>
+              </button>
+              <button type="button" class="btn btn-secondary" id="btnChooseGalleryPhoto" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-weight:700; border-radius:10px; font-size:0.92rem; border:1.5px solid #cbd5e1; background:#ffffff; color:#1e293b; cursor:pointer;">
+                <span>🖼️</span> <span data-i18n="btnChooseGalleryPhoto">🖼️ गॅलरीतून निवडा (Gallery / Files)</span>
+              </button>
+            </div>
           </div>
           <div class="preview-wrapper" id="previewWrapper" style="display:none">
             <img id="imagePreview" alt="Leaf preview" class="leaf-img-preview">
@@ -3870,13 +3879,20 @@
         <input type="password" name="pin" placeholder="••••" value="1234" required>
       </label>
       
-      <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px; font-size:0.8rem; color:#166534; margin-bottom:12px;">
-        💡 <strong>Quick Demo Login:</strong> Click below to immediately log in as Rajendra Sharma with pre-loaded demo records.
+      <div style="background:#f0fdf4; border:1.5px solid #86efac; padding:10px 14px; border-radius:10px; font-size:0.84rem; color:#166534; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.1rem;">✅</span>
+        <div>
+          <strong data-i18n="directLoginTitle">थेट लॉगिन (Direct Login):</strong> <span data-i18n="directLoginHint">कोणत्याही एसएमएस किंवा मेसेज पडताळणीची गरज नाही (No SMS / OTP message required).</span>
+        </div>
       </div>
 
-      <div class="modal-footer" style="padding-top:10px;">
+      <button type="button" class="btn btn-primary full-width" id="btnQuickDirectLogin" style="margin-bottom:12px; padding:12px; font-size:0.95rem; font-weight:700; background:#16a34a; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; box-shadow:0 3px 10px rgba(22,163,74,0.25);">
+        <span>🚜</span> <span data-i18n="btnDirectLoginQuick">1-क्लिक थेट लॉगिन / Direct Login (No SMS)</span>
+      </button>
+
+      <div class="modal-footer" style="padding-top:6px;">
         <button type="button" class="btn btn-secondary" id="btnCancelLogin">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="btnSubmitLogin">🚜 Login to Farm Vault</button>
+        <button type="submit" class="btn btn-primary" id="btnSubmitLogin">🚜 Login with Details</button>
       </div>
     </form>
 
@@ -4120,7 +4136,12 @@ const TRANSLATIONS = {
     cropRice: "🌾 Rice / Paddy (भात)",
     cropWheat: "🌾 Wheat (गहू)",
     cropMaize: "🌽 Maize / Corn (मका)",
-    cropApple: "🍎 Apple (सफरचंद)"
+    cropApple: "🍎 Apple (सफरचंद)",
+    btnTakeCameraPhoto: "📸 Take Photo (Camera)",
+    btnChooseGalleryPhoto: "🖼️ Choose from Gallery / Files",
+    directLoginTitle: "Direct Login:",
+    directLoginHint: "No SMS / OTP message required.",
+    btnDirectLoginQuick: "🚜 Instant 1-Click Login (No SMS)"
   },
   hi: {
     platformTagline: "५-इन-१ स्मार्ट कृषि डिजिटल मंच",
@@ -4193,7 +4214,12 @@ const TRANSLATIONS = {
     cropRice: "🌾 धान / चावल (Rice)",
     cropWheat: "🌾 गेहूं (Wheat)",
     cropMaize: "🌽 मक्का (Maize)",
-    cropApple: "🍎 सेब (Apple)"
+    cropApple: "🍎 सेब (Apple)",
+    btnTakeCameraPhoto: "📸 कैमरे से फोटो लें (Camera)",
+    btnChooseGalleryPhoto: "🖼️ गैलरी / फाइलों से चुनें",
+    directLoginTitle: "सीधा लॉगिन:",
+    directLoginHint: "किसी भी SMS या मैसेज की आवश्यकता नहीं।",
+    btnDirectLoginQuick: "🚜 सीधा 1-क्लिक लॉगिन (बिना SMS)"
   },
   mr: {
     platformTagline: "५-इन-१ स्मार्ट कृषी डिजिटल मंच",
@@ -4266,7 +4292,12 @@ const TRANSLATIONS = {
     cropRice: "🌾 भात / धान (Rice)",
     cropWheat: "🌾 गहू (Wheat)",
     cropMaize: "🌽 मका (Maize)",
-    cropApple: "🍎 सफरचंद (Apple)"
+    cropApple: "🍎 सफरचंद (Apple)",
+    btnTakeCameraPhoto: "📸 कॅमेऱ्याने फोटो काढा (Camera)",
+    btnChooseGalleryPhoto: "🖼️ गॅलरी / फाइल्समधून निवडा",
+    directLoginTitle: "थेट लॉगिन:",
+    directLoginHint: "कोणत्याही SMS किंवा मेसेजची गरज नाही.",
+    btnDirectLoginQuick: "🚜 1-क्लिक थेट लॉगिन (SMS शिवाय)"
   }
 };
 
@@ -4774,6 +4805,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   const dropZone = document.getElementById("dropZone");
   const fileInput = document.getElementById("leafFileInput");
+  const leafCameraInput = document.getElementById("leafCameraInput");
+  const leafGalleryInput = document.getElementById("leafGalleryInput");
+  const btnTakeCameraPhoto = document.getElementById("btnTakeCameraPhoto");
+  const btnChooseGalleryPhoto = document.getElementById("btnChooseGalleryPhoto");
+
   const dropPrompt = document.getElementById("dropzonePrompt");
   const previewWrapper = document.getElementById("previewWrapper");
   const imgPreview = document.getElementById("imagePreview");
@@ -4799,15 +4835,44 @@ document.addEventListener("DOMContentLoaded", () => {
         handleFileSelection(e.dataTransfer.files[0]);
       }
     });
-  }
-
-  if (fileInput) {
-    fileInput.addEventListener("change", (e) => {
-      if (e.target.files && e.target.files[0]) {
-        handleFileSelection(e.target.files[0]);
+    // Click on dropzone itself opens gallery/files unless clicked on a specific button
+    dropZone.addEventListener("click", (e) => {
+      if (e.target.closest("#btnTakeCameraPhoto") || e.target.closest("#btnChooseGalleryPhoto") || e.target.closest("#btnRemovePreview") || e.target.closest("#btnAnalyzeLeaf")) {
+        return;
+      }
+      if (dropPrompt && dropPrompt.style.display !== "none") {
+        if (leafGalleryInput) leafGalleryInput.click();
+        else if (fileInput) fileInput.click();
       }
     });
   }
+
+  // Camera button: Opens direct mobile camera
+  if (btnTakeCameraPhoto && leafCameraInput) {
+    btnTakeCameraPhoto.addEventListener("click", (e) => {
+      e.stopPropagation();
+      leafCameraInput.click();
+    });
+  }
+
+  // Gallery button: Opens device photo gallery / file manager
+  if (btnChooseGalleryPhoto && leafGalleryInput) {
+    btnChooseGalleryPhoto.addEventListener("click", (e) => {
+      e.stopPropagation();
+      leafGalleryInput.click();
+    });
+  }
+
+  // Handle file selection from all file inputs (generic, camera, gallery)
+  [fileInput, leafCameraInput, leafGalleryInput].forEach(inp => {
+    if (inp) {
+      inp.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFileSelection(e.target.files[0]);
+        }
+      });
+    }
+  });
 
   // Disease Scanner Crop Selection & Pill Synchronization
   const analyzeCropSelect = document.getElementById("selectAnalyzeCrop");
@@ -4911,7 +4976,9 @@ document.addEventListener("DOMContentLoaded", () => {
     removeBtn.addEventListener("click", () => {
       currentFile = null;
       currentSample = null;
-      fileInput.value = "";
+      if (fileInput) fileInput.value = "";
+      if (leafCameraInput) leafCameraInput.value = "";
+      if (leafGalleryInput) leafGalleryInput.value = "";
       imgPreview.src = "";
       dropPrompt.style.display = "block";
       previewWrapper.style.display = "none";
@@ -4936,6 +5003,8 @@ document.addEventListener("DOMContentLoaded", () => {
       currentSample = btn.dataset.sample;
       currentFile = null;
       if (fileInput) fileInput.value = "";
+      if (leafCameraInput) leafCameraInput.value = "";
+      if (leafGalleryInput) leafGalleryInput.value = "";
 
       if (currentSample) {
         if (currentSample.includes("cotton")) setAnalyzeCrop("Cotton");
@@ -5954,10 +6023,17 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       if (transcript && transcript.trim()) {
-        if (voiceStatusText) voiceStatusText.textContent = getVoiceStatusMessage("processing");
-        if (chatInput) chatInput.value = transcript.trim();
-        sendChatMessage(transcript.trim());
-        if (chatInput) chatInput.value = "";
+        const text = transcript.trim();
+        if (chatInput) {
+          chatInput.value = text;
+          chatInput.focus();
+        }
+        if (sendBtn) sendBtn.disabled = false;
+        const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+        let readyNotice = "✅ Speech recognized. Tap Send ↗ to submit.";
+        if (currentLang === "hi") readyNotice = "✅ आवाज़ दर्ज हो गई। भेजने के लिए Send ↗ दबाएं।";
+        if (currentLang === "mr") readyNotice = "✅ आवाज नोंदवली. पाठवण्यासाठी Send ↗ दाबा.";
+        if (voiceStatusText) voiceStatusText.textContent = readyNotice;
       }
     };
 
@@ -6666,7 +6742,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const phone = document.getElementById("loginPhone").value.trim();
+      const phone = document.getElementById("loginPhone").value.trim() || "+91 98220 12345";
       const name = document.getElementById("loginName").value.trim() || "Rajendra Sharma";
       
       const farmer = getActiveFarmer();
@@ -6684,7 +6760,39 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (err) {}
 
       if (loginModal) loginModal.style.display = "none";
-      showToast(`Namaste, ${name}! Logged into your Farm Vault.`, "success");
+      showToast(`Namaste, ${name}! Logged into your Farm Vault (Direct Login - No SMS required).`, "success");
+    });
+  }
+
+  // 1-Click Instant Direct Login without SMS verification
+  const btnQuickDirectLogin = document.getElementById("btnQuickDirectLogin");
+  if (btnQuickDirectLogin) {
+    btnQuickDirectLogin.addEventListener("click", async () => {
+      const farmer = getActiveFarmer();
+      farmer.name = "Rajendra Sharma";
+      farmer.phone = "+91 98220 12345";
+      farmer.district = "Nashik";
+      farmer.village = "Niphad";
+      farmer.farm_size_acres = 6.5;
+      farmer.soil_type = "Black Clay Soil";
+      farmer.primary_crop = "Wheat";
+      farmer.is_logged_in = true;
+      saveActiveFarmer(farmer);
+
+      try {
+        await fetch("/api/farmer/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: farmer.phone, name: farmer.name })
+        });
+      } catch (err) {}
+
+      if (loginModal) loginModal.style.display = "none";
+      const currentLang = localStorage.getItem("farm_connect_lang") || "en";
+      let msg = "✅ थेट लॉगिन यशस्वी! Farm Vault सक्रिय झाले (Direct Login Successful).";
+      if (currentLang === "hi") msg = "✅ सीधा लॉगिन सफल! फार्म वॉल्ट सक्रिय हुआ (बिना SMS).";
+      if (currentLang === "en") msg = "✅ Direct Login Successful! Farm Vault Activated (No SMS needed).";
+      showToast(msg, "success");
     });
   }
 
